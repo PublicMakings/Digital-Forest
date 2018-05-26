@@ -7,6 +7,7 @@ var txt;
 
 var hasSubmitted = false;
 
+    // should be shorter probably
 var languageForest = {
         tree: "[FF]",
         trees: "[F-F+]",
@@ -40,24 +41,23 @@ function forestStory(){
 
     txt = textField.value();
     var words = splitTokens(txt, delimiters);
-    // print(words);
 
-
-    // SEMANTIC RULES
-
-
-// Math option creating key value pairs with numbers and then proposing a math operand...
-
-
-// character conversion
-
-    // WORD COUNT BASED RULES
+    // componenets:
+    //   semantic rules
+    //   Math option creating key value pairs with numbers and then proposing a math operand...
+    //   character conversion
+    //   word count based rules
 
     newRule = wordCountRules(newRule, words);
     newRule = semanticRules(newRule, words);
+    newRule = charCountRules(newRule, words);
+    newRule = charValuesRules(newRule, words);
 
+    newRule = closeOpenBrackets(newRule);
+    // protection and sanitization goes here:
 
-// protection and sanization
+    //
+
 
 
     rules[0].b = newRule;
@@ -82,7 +82,6 @@ function textToBin(text) {
   }
   return output.join(" ");
 }
-
 
 function semanticRules(string, words){
 
@@ -112,17 +111,56 @@ function wordCountRules(string, words){
     return string;
 }
 
+function charCountRules(string, words){
+    var word;
+    var which;
+    for (var n = 0; n < words.length; n++){
+
+        word = words[n];
+        which = word.length % 6
+
+        if      (which == 0) string += "F"
+        else if (which == 1) string += "G"
+        else if (which == 2) string += "+"
+        else if (which == 3) string += "-"
+        else if (which == 4) string += "["
+        else if (which == 5) string += "]"
+    }
+
+    return string;
+}
+
+function charValuesRules(string, words){
+    var which, letter;
+    var ASCIIchar;
+    for (var n = 0; n < words.length; n++){
+        for (var m = 0; m < words[n].length; m++){
+            letter = words[n].charAt(m).charCodeAt();
+
+            which = letter % 6;
+
+            if      (which == 0) string += "F"
+            else if (which == 1) string += "G"
+            else if (which == 2) string += "+"
+            else if (which == 3) string += "-"
+            else if (which == 4) string += "["
+            else if (which == 5) string += "]"
+        }
+    }
+
+    return string;
+}
+
 function countOpenBrackets(string){
 
     var left = 0, right = 0;
+    var letter;
 
-    var char;
     for (var n = 0; n < string.length; n++){
-        char = string.charAt[n];
+        letter = string.charAt(n);
 
-        if (char == "[") left += 1;
-        if (char == "]") right += 1;
-
+        if (letter == "[") left += 1;
+        if (letter == "]") right += 1;
     }
 
     return (left - right);
@@ -130,39 +168,49 @@ function countOpenBrackets(string){
 
 function closeOpenBrackets(string){
 
-    var n = countOpenBrackets(string);
+    var openBrackets = countOpenBrackets(string);
 
-    var closingBrackets = "]" * n
+    if (openBrackets > 0){
+        return string + Array(openBrackets + 1).join("]");
+    }
+    else if (openBrackets < 0){
+        return Array(-openBrackets + 1).join("[") + string;
+    }
 
-    return string + closingBrackets;
+    return string;
 }
 
 
-function overallCurve(string){
+function stringAnalysis(string){
 
-    var plusses = [0];
-    var minuses = [0];
+    var consecutives = {"F": [], "+": [], "-": []}
+    var count        = {"F": 0, "+": 0, "-": 0}
+    var temp         = {"F": [0], "+": [0], "-": [0]}
 
-    var layer = 0
-    var char;
+    var letter;
     for (var n = 0; n < string.length; n++){
 
-        char = string[n];
+        letter = string.charAt(n);
 
-        if (char == "[") layer += 1;
-        if (char == "]") layer -= 1;
+        if (letter == "["){ // remember how many consecutives there were at this point.
 
-        if (layer > plusses.length - 1)
-        {
-            plusses.push(0);
-            minuses.push(0);
+            for (var key in consecutives)
+                temp[key].push(count[key])
         }
+        else if (letter == "]"){ // store how many consucutives there have been and return to the previous layer's amount.
 
-        if (char == "+") plusses[layer] += 1;
-        if (char == "-") minuses[layer] += 1;
-        if (char == "G") minuses[layer] += 0.1;
+            for (var key in consecutives){
+                consecutives[key].push(count[key]);
+                count[key] = temp[key].pop();
+            }
+        }
+        // increment the count
+        else if (letter == "F") count["F"] += 1;
+        else if (letter == "+") count["+"] += 1;
+        else if (letter == "-") count["-"] += 1;
+        else if (letter == "G") count["-"] += 1/GminusRatio;
+
     }
 
-
-    return {plusses, minuses}
+    return consecutives;
 }

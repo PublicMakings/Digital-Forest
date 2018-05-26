@@ -11,6 +11,7 @@ var windFactor = 1;
 var d = 0;
 var char_n = 0;
 var root_n = 0;
+var GminusRatio = 10;
 
 var maxDepth = 3;
 
@@ -22,7 +23,8 @@ var trunkCol, woodCol, rootCol;
 var rules = [];
 rules[0] = {
   a: "F",
-  b: "FF+[+FGF+F]-[GFGF+F][F-GF+F]"
+  // b: "FF+[+FGF+F]-[GFGF+F][F-GF+F]"
+  b: "FF+[+FGF+F]-"
 }
 
 
@@ -203,7 +205,7 @@ function growthRules(letter, branchLength, depthFactor, gravity){
     }
     else if (letter == "+") rotate(angle * windFactor);
     else if (letter == "-") rotate(-angle * windFactor);
-    else if (letter == "G") rotate(-angle + windFactor/10);
+    else if (letter == "G") rotate(-angle + windFactor/GminusRatio);
     else if (letter == "["){
         push();
         currentDepth /= depthFactor;
