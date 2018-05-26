@@ -24,4 +24,4 @@ p5.js interactive artwork about narratives of trees.
 * [gentle sway](https://github.com/AdaZhao1211/noc/tree/master/binaryTree)
 
 * [CSS tips](https://css-tricks.com/clipping-masking-css/)
-* [Alpha mask] (https://forum.processing.org/two/discussion/23886/masking-a-shape-with-another-shape)
+* [Alpha mask](https://forum.processing.org/two/discussion/23886/masking-a-shape-with-another-shape)
