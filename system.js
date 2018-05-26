@@ -31,6 +31,12 @@ function setup() {
 
     clearCanvas();
 
+// circle mask
+    masque = createGraphics(width,height);
+    ring =  createGraphics(width,height);
+   
+
+    
     frameRate(100);
     angle = radians(20);
     len *= 0.45^(maxDepth);
@@ -38,7 +44,7 @@ function setup() {
     resetSystems();
     // print(branchings);
 
-    woodCol  = color(115, 100, 60, 100);
+    woodCol  = color(105, 100, 60, 100);
     trunkCol = color(115, 100, 60, 220);
     rootCol  = color(115, 100, 80, 120);
 
@@ -53,8 +59,9 @@ function setup() {
 
 
 
-
 }
+
+var img
 
 function draw(){
     clearCanvas();
@@ -63,14 +70,41 @@ function draw(){
 
     strokeWeight(2);
     stroke(0, 100);
-    ellipse(width/2, height/2, width*0.9, height*0.9);
+//    ellipse(width/2, height/2, width*0.85, height*0.85);
 
-    strokeWeight(0.1);
+//binary background    
+    
+// initial circle
+    
+    masque.background(50,200,60,1);
+    masque.fill(255,10);
+    masque.ellipse(width/2, height/2, width*0.85, height*0.85);
+    image(masque,0,0); 
+    
+// binary font formating
+    
+    textFont('Georgia',15);
+    strokeWeight(.7);
     fill(200, 50);
-    textAlign(CENTER, CENTER);
-    if (hasSubmitted) text(textToBin(txt), 0,0, width, height);
+    textAlign(CENTER,CENTER); //this was weird with size change
+    
+    if (hasSubmitted){
+        ring.background(90,0,20);
+        ring.fill(90,0,20);
+        ring.ellipse(width/2,height/2, 100,100);;
+        image(ring);
+        
+        text(textToBin(txt), 0,0, width, height);
+    
+        
+//        field = image(ring);
+//        masque.rect(0,0,width, height);
+//        image(masque, 0,0);
+//        ring.ellipse(width/2, height/2, width*0.85, height*0.85);
+    }
 
-
+// TREE?    
+    
     windFactor = 1 + sin(d)/20;
     d += noise(d)/8;
 
