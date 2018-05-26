@@ -22,3 +22,5 @@ p5.js interactive artwork about narratives of trees.
 * [student project](https://people.ece.cornell.edu/land/OldStudentProjects/cs490-94to95/hwchen/)
 * [Creepy tree](https://picandnic.wordpress.com/2018/01/30/creepy-tree/)
 * [gentle sway](https://github.com/AdaZhao1211/noc/tree/master/binaryTree)
+
+* [CSS tips](https://css-tricks.com/clipping-masking-css/)
