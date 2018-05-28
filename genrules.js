@@ -24,8 +24,9 @@ var lengthBasedRules = {
 
 
 
-function semanticRules(string, words){
+function semanticRules(words){
 
+    var string = "";
     var keyword, rule;
     for(var x = 0; x < words.length; x++){
 
@@ -38,7 +39,9 @@ function semanticRules(string, words){
     return string;
 }
 
-function wordCountRules(string, words){
+function wordCountRules(words){
+
+    var string = "";
     var lengths = Object.keys(lengthBasedRules);
     var potentialRules = Object.values(lengthBasedRules);
 
@@ -52,7 +55,8 @@ function wordCountRules(string, words){
     return string;
 }
 
-function charCountRules(string, words){
+function charCountRules(words){
+    var string = "";
     var word;
     var which;
     for (var n = 0; n < words.length; n++){
@@ -71,7 +75,8 @@ function charCountRules(string, words){
     return string;
 }
 
-function charValuesRules(string, words){
+function charValuesRules(words){
+    var string = "";
     var which, letter;
     var ASCIIchar;
     for (var n = 0; n < words.length; n++){
@@ -95,6 +100,9 @@ function charValuesRules(string, words){
 
 
 // CLEANUP FUNCTIONS:
+
+// order of operations:
+// close brackets |> remove excess rotations <|commutative|> remove repeat rotations |> remove empty brackets
 
 function countOpenBrackets(string){
 
@@ -125,8 +133,6 @@ function closeOpenBrackets(string){
     return string;
 }
 
-
-
 function removeEmptyBrackets(string){ // performs: `[]F -> F` and `[[F]] -> F`
 
     var closeSide = [];
@@ -144,8 +150,8 @@ function removeEmptyBrackets(string){ // performs: `[]F -> F` and `[[F]] -> F`
             if (content.pop() == false){
 
                 var closing = closeSide.pop();
-                string = string.slice(0, closing) + string.slice(closing + 1);
-                string = string.slice(0,n) + string.slice(n+1)
+                string = deleteChar(string, closing);
+                string = deleteChar(string, n);
             }
         }
         else{
@@ -156,7 +162,6 @@ function removeEmptyBrackets(string){ // performs: `[]F -> F` and `[[F]] -> F`
     return string;
 }
 
-
 function removeRepeatRotation(string){ // function to convert things like `+-+-+-+F` into `+F`
 
     var plus = [];
@@ -164,39 +169,63 @@ function removeRepeatRotation(string){ // function to convert things like `+-+-+
 
 
     var letter;
-    for (var n = string.length - 1; n >= 0; n--){
+    for (var n = string.length - 1; n >= 0; n--){  // traverse the string backwards
         letter = string.charAt(n);
 
-        if      (letter == "+") plus.push(n);
-        else if (letter == "-") minus.push(n);
-        else if (letter != "G"){
+        if      (letter == "+") plus.push(n);  // remember the position
+        else if (letter == "-") minus.push(n); // remember the position
+
+        if (!isAngleCharacter(letter) || n == 0){    // brackets or Fs reset the count
 
             if (plus.length > 0 && minus.length > 0){
-
-
+                            print(plus, minus)
+                // the lower of the two lengths is the number of rotations that cancel out
+                // e.g. plus.length = 3 and minus.length = 2 --> only 2 cancel out
                 var cancels = min(plus.length, minus.length)
 
+                // combine the coordinates of however many (e.g. cancels = 2) pluses and minuses
                 var indices = concat(plus.slice(0, cancels), minus.slice(0, cancels));
                 indices.sort();
-                indices.reverse(); // now it's largest to smallest
+                indices.reverse(); // now the indices are arranged largest to smallest (important for deletions to occur correctly).
 
                 for (var i = 0; i < indices.length; i++){
-                    string = string.slice(0, indices[i]) + string.slice(indices[i] + 1)
+                    string = deleteChar(string, indices[i]);
                 }
             }
 
+            // reset counter
             plus = [];
             minus = [];
-
         }
     }
 
     return string;
 }
 
+function removeExcessRotation(string){
+
+    var foundF = false;
+
+    var letter;
+    for (var n = string.length - 1; n >= 0; n--){
+        letter = string.charAt(n);
+
+        if (letter == "]"){
+            foundF = false;
+        } else if (letter == "F"){
+            foundF = true;
+        } else if (letter != "[" && !foundF){
+            string = deleteChar(string, n);
+        }
+    }
+    return string;
+}
 
 
 function stringAnalysis(string){
+
+    // consectives here refers to how many of these characters are encounted up to that point in the string.
+    // only close brackets reverse teh count
 
     var consecutives = {"F": [], "+": [], "-": []}
     var count        = {"F": 0, "+": 0, "-": 0}
@@ -207,19 +236,22 @@ function stringAnalysis(string){
 
         letter = string.charAt(n);
 
-        if (letter == "["){ // remember how many consecutives there were at this point.
-
-            for (var key in consecutives)
-                temp[key].push(count[key])
-        }
-        else if (letter == "]"){ // store how many consecutives there have been and return to the previous layer's amount.
+        // remember how many consecutives there were at this point.
+        if (letter == "["){
 
             for (var key in consecutives){
-                consecutives[key].push(count[key]);
-                count[key] = temp[key].pop();
+                temp[key].push(count[key])              // store the current count in the stack
             }
         }
-        // increment the count
+        // store how many consecutives there have been and return to the previous layer's amount.
+        else if (letter == "]"){
+
+            for (var key in consecutives){
+                consecutives[key].push(count[key]);     // store the final count up to this point
+                count[key] = temp[key].pop();           // return the count to it's previous amount
+            }
+        }
+        // increment the count of whichever one
         else if (letter == "F") count["F"] += 1;
         else if (letter == "+") count["+"] += 1;
         else if (letter == "-") count["-"] += 1;
@@ -230,6 +262,8 @@ function stringAnalysis(string){
     return consecutives;
 }
 
+
+// convenience functions. May not be necessary
 function isAngleCharacter(letter){
 
     if (letter == "+") return true;
@@ -248,4 +282,9 @@ function isBracket(letter){
     if (letter == "]") return true;
 
     return false;
+}
+
+// NOTE: 0-based indexing. E,g, `deleteChar("this", 1) --> "tis"`
+function deleteChar(string, n){
+    return string.slice(0, n) + string.slice(n + 1);
 }

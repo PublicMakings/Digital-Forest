@@ -5,28 +5,30 @@
 var axiom = "F";
 var branchings = axiom; // string for branches
 var roots      = axiom; // string for roots
-var len = 3;            // standard length of branch
+var len = 8;           // length of trunk segment/s
+var trunkBranchRatio = 8
 var angle;
 var windFactor = 1;
 var d = 0;
 var char_n = 0;
 var root_n = 0;
-var GminusRatio = 10;   // ration between 'G' rule and '-' rule.
+var GminusRatio = 10;   // ratio between 'G' rule and '-' rule.
 var maxDepth = 3;
-var baseBranchWidth = 30;
+var baseBranchWidth = 15;
 var branchWidth;
 
-var branchDepthFactor = 2;
+var branchDepthFactor = 3;
 var rootDepthFactor = 3;
 
+var treeLoc = 0.7; // as a fraction of the canvas height
 var trunkCol, woodCol, rootCol;
-
+var drawRoots = true;
 
 var rules = [];
 rules[0] = {
   a: "F",
-  // b: "FF+[+FGF+F]-[GFGF+F][F-GF+F]"
-  b: "FF+[+FGF+F]-"
+  b: "FF+[+FGF+F]-[GFGF+F][F-GF+F]"
+  // b: "FF+[+FGF+F]-"
 }
 
 
@@ -37,9 +39,9 @@ function setup() {
 
     frameRate(100);
     angle = radians(17);
-    len *= 0.45^(maxDepth);
 
     resetLSystems();
+    setTreeParameters();
     // print(branchings);
 
     woodCol  = color(115, 100, 60, 100);
@@ -85,23 +87,27 @@ function draw(){
     // update values:
     updateWind();
     // increment_char();
-    char_n = branchings.length - 1; // temporary
-    root_n = roots.length - 1;      // temporary
+    fullGrowth(); // temporary
 
     resetMatrix();
-    translate(width/2, height - 100);
+    translate(width/2, treeLoc*height);
     sproutBranches(1, len, char_n, branchings, 2, woodCol);
-    // hyphae();
+    if (drawRoots) {hyphae();}
+
 }
 
 function keyReleased(){
 
-    print(keyCode);
+    if (keyCode === UP_ARROW){
+        maxDepth += 1;
+        resetLSystems();
+    }
+    else if (keyCode === DOWN_ARROW){
+        maxDepth -= 1;
+        resetLSystems();
+    }
 
-    if      (keyCode === UP_ARROW)   maxDepth += 1;
-    else if (keyCode === DOWN_ARROW) maxDepth -= 1;
 
-    resetLSystems();
 }
 
 
@@ -119,6 +125,17 @@ function increment_char(){
     if (char_n < branchings.length) char_n += 1;
     if (root_n < roots.length) root_n += 1;
 }
+function resetCharCount(){
+    char_n = 0;
+    root_n = 0;
+}
+
+function fullGrowth(){
+    char_n = branchings.length - 1;
+    root_n = roots.length - 1;
+}
+
+
 function clearCanvas(){
     var canvas = createCanvas(500, 500);
 }
@@ -158,7 +175,10 @@ function resetLSystems(){
     for (var i = 0; i < maxDepth -1; i++){
         roots = generate(roots);
     }
+
+    resetCharCount();
 }
+
 
 function generate(sentence){
 
@@ -183,8 +203,12 @@ function generate(sentence){
 }
 
 
-function sproutRoots(){    rhizome(-1, len, root_n, roots,      rootDepthFactor,   rootCol); }
-function sproutBranches(){ rhizome( 1, len, char_n, branchings, branchDepthFactor, woodCol); }
+function sproutRoots(){
+    rhizome(-1, len, root_n, roots,      rootDepthFactor,   rootCol);
+}
+function sproutBranches(){
+    rhizome( 1, len, char_n, branchings, branchDepthFactor, woodCol);
+}
 
 function rhizome(gravity,       // grows up (1) or down (-1)
                  branchLength,  // length of a standard branch
@@ -198,39 +222,48 @@ function rhizome(gravity,       // grows up (1) or down (-1)
     var local_len = branchLength;
     var current;
     var trunk;
-    // var i = charCount;
+
+    push();
     for(var i = 0; i < charCount; i++){
         current = lsystem.charAt(i);
 
         trunk = (i < 2);
         if (trunk)  stroke(trunkCol);
         else        stroke(mainCol);
-        local_len = trunk ? branchLength * 2 : branchLength * (1/4 + noise(3*i));
+        local_len = trunk ?
+                        branchLength :
+                        branchLength * (1 + 4*noise(3*i)/trunkBranchRatio);
 
         growthRules(current,
                     local_len,
                     depthFactor,
                     gravity);
     }
+
+    pop();
 }
 
 function hyphae(){ // draws the roots portion by reversing the growth direction and altering the angle (occurs twice for symmetry).
 
     resetMatrix();
-    translate(width/2, height - 180);
+    translate(width/2, treeLoc*height);
+
     angle = -2*angle;
     sproutRoots();
 
-    // resetMatrix();
-    // translate(width/2, height - 180);
+    resetMatrix();
+    translate(width/2, treeLoc*height);
     angle = -angle;
     sproutRoots();
-
     angle /= 2;
 
+    resetMatrix();
 }
 
 function growthRules(letter, branchLength, depthFactor, gravity){
+
+    var local_wind = gravity > 0 ? windFactor : 1;
+
 
     strokeWeight(branchWidth);
 
@@ -239,9 +272,9 @@ function growthRules(letter, branchLength, depthFactor, gravity){
         line(0,0,0,-branchLength*gravity);
         translate(0,-branchLength*gravity);
     }
-    else if (letter == "+") rotate(angle * windFactor);
-    else if (letter == "-") rotate(-angle * windFactor);
-    else if (letter == "G") rotate(-angle + windFactor/GminusRatio);
+    else if (letter == "+") rotate(angle * local_wind);
+    else if (letter == "-") rotate(-angle * local_wind);
+    else if (letter == "G") rotate(-angle + local_wind/GminusRatio);
     else if (letter == "["){
         push();
         branchWidth /= depthFactor;
@@ -250,6 +283,7 @@ function growthRules(letter, branchLength, depthFactor, gravity){
         pop();
         branchWidth *= depthFactor;
     }
-
 }
 
+
+function toggleRoots(){ drawRoots = !drawRoots; }
