@@ -15,7 +15,7 @@ function forestStory(){
 
     hasSubmitted = true;
 
-    var newRule = "F";
+    var newRule = "";
 
     txt = textField.value();
     bintext = textToBin(txt);
@@ -38,7 +38,7 @@ function forestStory(){
     // newRule = removeEmptyBrackets(newRule);
     //
 
-    newRule = cleanUp(newRule);
+    newRule = "F" + cleanUp(newRule);
     // rules[0].b = newRule;
     rules[0].b = newRule;
 

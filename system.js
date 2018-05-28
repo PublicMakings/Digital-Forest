@@ -37,6 +37,12 @@ function setup() {
 
     clearCanvas();
 
+// circle mask
+    masque = createGraphics(width,height);
+    ring =  createGraphics(width,height);
+
+
+
     frameRate(100);
     angle = radians(17);
 
@@ -44,7 +50,7 @@ function setup() {
     setTreeParameters();
     // print(branchings);
 
-    woodCol  = color(115, 100, 60, 100);
+    woodCol  = color(105, 100, 60, 100);
     trunkCol = color(115, 100, 60, 220);
     rootCol  = color(115, 100, 80, 120);
 
@@ -60,19 +66,20 @@ function setup() {
 
     submit.mousePressed(forestStory);
 
-
+    textFont('Georgia',15);
 }
+
 
 function draw(){
     clearCanvas();
     resetMatrix();
 
     // binary background text
-
     if (hasSubmitted) {
+        // textFont('Georgia',15);
+        strokeWeight(.7);
+        fill(200, 50);
         textAlign(CENTER, CENTER);
-        fill(100, 50);
-        strokeWeight(0.1);
         text(bintext, 0,0, width, height);
     }
 
@@ -82,7 +89,6 @@ function draw(){
     strokeWeight(2);
     stroke(100, 100);
     CircleMask(0.95);
-
 
     // update values:
     updateWind();
