@@ -15,13 +15,16 @@ NPMJS.com is a listing of packages.
 ```javascript  
 var X = require(module.config)
 ```
+
+Nodemon -- website server on localhost ?
   
 ### breif overview of setup steps...
 * npm init - creates a JSON with infor about project.
 * npm install [package name]-- save
   * saves info to npm init file
 * create base .js file.
-* 
+
+route shows a request form user which navigates server via keyword and some parameters.
 
 
 ## References -
