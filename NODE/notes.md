@@ -5,6 +5,13 @@ Node is a javascript framework for writing custom server.
 * host an API
 * Node also provides a javascript environment in terminal
 
+
+sync vs no sync?
+* this is synchronous and blocking
+* this would lock up the server waiting for data.
+readFile()
+
+
 ### NPM - Node Package Manager
 runs in terminal
 NPMJS.com is a listing of packages.
