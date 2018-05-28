@@ -10,11 +10,24 @@ Node also provides a javascript environment in terminal
 runs in terminal
 NPMJS.com is a listing of packages.
 * "TWIT" is a twitter package
-
+  * dev.twitter.com - get Oauth and api keys.
+  * decouple passcodes and main code
+  * Node can store and pull code from other files.
+```javascript  
+var X = require(module.config)
+```
+  
+  
+  
 * npm init - creates a JSON with infor about project.
 
 * npm install [package name]-- save
   * saves info to npm init file
+
+* create base .js file.
+
+* 
+
 
 ## References -
 [Shiffman goes over bldg a server](https://www.youtube.com/watch?v=RF5_MPSNAtU)
