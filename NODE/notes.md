@@ -1,10 +1,9 @@
 # Notes
 
 Node is a javascript framework for writing custom server.
-server - requests & responses; Node can communicate back and forth between with other websites and then pass that info to javascript.
-host an API
-Node also provides a javascript environment in terminal
-
+* server - requests & responses; Node can communicate back and forth between with other websites and then pass that info to javascript.
+* host an API
+* Node also provides a javascript environment in terminal
 
 ### NPM - Node Package Manager
 runs in terminal
@@ -17,15 +16,11 @@ NPMJS.com is a listing of packages.
 var X = require(module.config)
 ```
   
-  
-  
+### breif overview of setup steps...
 * npm init - creates a JSON with infor about project.
-
 * npm install [package name]-- save
   * saves info to npm init file
-
 * create base .js file.
-
 * 
 
 
