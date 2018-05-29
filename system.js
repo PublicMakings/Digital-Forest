@@ -25,7 +25,8 @@ rules[0] = {
   b: "FF+[+FGF+F]-[GFGF+F][F-GF+F]"
 }
 
-
+var masque
+var ring
 function setup() {
 
 
@@ -70,14 +71,18 @@ function draw(){
 
     strokeWeight(2);
     stroke(0, 100);
-//    ellipse(width/2, height/2, width*0.85, height*0.85);
 
+
+//JSON
+    makeInfo();
+    
 //binary background    
     
 // initial circle
     
     masque.background(50,200,60,1);
-    masque.fill(255,10);
+    var bkgd = image(masque);
+    masque.fill(255,20);
     masque.ellipse(width/2, height/2, width*0.85, height*0.85);
     image(masque,0,0); 
     
@@ -89,10 +94,13 @@ function draw(){
     textAlign(CENTER,CENTER); //this was weird with size change
     
     if (hasSubmitted){
-        ring.background(90,0,20);
-        ring.fill(90,0,20);
-        ring.ellipse(width/2,height/2, 100,100);;
-        image(ring);
+        
+        ring.fill(255,0,0,10);
+        ring.ellipse(width/2, height/2, width*0.85, height*0.85)
+        image(ring)
+//        bkgd.mask(blu);
+        
+    
         
         text(textToBin(txt), 0,0, width, height);
     
@@ -100,7 +108,7 @@ function draw(){
 //        field = image(ring);
 //        masque.rect(0,0,width, height);
 //        image(masque, 0,0);
-//        ring.ellipse(width/2, height/2, width*0.85, height*0.85);
+//        ring.;
     }
 
 // TREE?    
@@ -116,6 +124,7 @@ function draw(){
     translate(width/2, height - 100);
     sproutBranches(1, len, char_n, branchings, 2, woodCol);
     // hyphae();
+    
 }
 
 function keyReleased(){
