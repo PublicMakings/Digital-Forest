@@ -152,6 +152,10 @@ function removeEmptyBrackets(string){ // performs: `[]F -> F` and `[[F]] -> F`
                 var closing = closeSide.pop();
                 string = deleteChar(string, closing);
                 string = deleteChar(string, n);
+
+                if (closeSide.length > 0) {
+                    closeSide = closeSide.map( i => i-2 ); // lower each remaining element's value
+                }
             }
         }
         else{
