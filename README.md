@@ -5,12 +5,18 @@ p5.js interactive artwork about narratives of trees.
 ### *Coding*
 - [ ] sanitize filter
 - [ ] Binary background
+- [ ] eventually create a token for writing to the database?
+
+
+
+
 ### *Writing*
 - [ ] make interview questions
 - [x] Credits for index
 - [ ] Format for Letterpress
 - [ ] translate core architecture into opaque poetics
 - [ ] proofread
+
 
 
 # References
