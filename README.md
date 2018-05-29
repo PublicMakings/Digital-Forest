@@ -7,6 +7,9 @@ p5.js interactive artwork about narratives of trees.
 - [ ] Binary background
 - [ ] eventually create a token for writing to the database?
 
+- [ ] figure out firebase better, [security  rules](https://gist.github.com/codediodeio/6dbce1305b9556c2136492522e2100f6)
+    * more [firebase security stuff](https://www.linkedin.com/pulse/can-cloud-functions-firebase-secure-way-hide-api-keys-mayur-dube)
+    * [firebase api refering websites](https://stackoverflow.com/questions/35418143/how-to-restrict-firebase-data-modification)
 
 
 
