@@ -54,7 +54,7 @@ function forestStory(){
 
 function cleanUp(string){
 
-    string = closeOpenBrackets(string);
+    string = removeUnpairedBrackets(string);
     string = removeRepeatRotation(string);
     string = removeExcessRotation(string);
     string = removeEmptyBrackets(string);

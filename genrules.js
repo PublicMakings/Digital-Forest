@@ -109,7 +109,7 @@ function countOpenBrackets(string){
     var left = 0, right = 0;
     var letter;
 
-    for (var n = 0; n < string.length; n++){
+    for (let n = 0; n < string.length; n++){
         letter = string.charAt(n);
 
         if (letter == "[") left += 1;
@@ -118,6 +118,35 @@ function countOpenBrackets(string){
 
     return (left - right);
 }
+
+function removeUnpairedBrackets(string){
+
+    var letter;
+    var left = [], right = [];
+
+    for (let n = string.length - 1; n >= 0; n--){
+
+        letter = string.charAt(n);
+
+        if      (letter == "[") left.push(n);
+        else if (letter == "]") right.push(n);
+
+        if (left.length > right.length){
+            string = deleteChar(string,  left.pop());
+        }
+    }
+
+    var dif = right.length - left.length;
+
+    for (var n = 0; n < dif; n++){ // effectively works as an if condition for right > left
+        string = deleteChar(string, right.pop());
+        right = right.map( i => i-1 );
+
+    }
+
+    return string;
+}
+
 
 function closeOpenBrackets(string){
 
@@ -182,7 +211,6 @@ function removeRepeatRotation(string){ // function to convert things like `+-+-+
         if (!isAngleCharacter(letter) || n == 0){    // brackets or Fs reset the count
 
             if (plus.length > 0 && minus.length > 0){
-                            print(plus, minus)
                 // the lower of the two lengths is the number of rotations that cancel out
                 // e.g. plus.length = 3 and minus.length = 2 --> only 2 cancel out
                 var cancels = min(plus.length, minus.length)
