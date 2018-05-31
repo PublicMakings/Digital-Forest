@@ -27,18 +27,17 @@ function forestStory(){
     // - character conversion
     // - word count based rules
 
+    // at the moment, each of the items produces what is essentially an independent rule and then we tack all those rules together.
+    // instead, consider a system where each of these layers are convolutions to an input rule
     newRule += wordCountRules(words);
     newRule += semanticRules(words);
     newRule += charCountRules(words);
     newRule += charValuesRules(words);
+
     // protection and sanitization goes here:
-    // newRule = closeOpenBrackets(newRule);
-    // newRule = removeRepeatRotation(newRule);
-    // newRule = removeExcessRotation(newRule);
-    // newRule = removeEmptyBrackets(newRule);
+    newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
     //
 
-    newRule = "F" + cleanUp(newRule);
     // rules[0].b = newRule;
     rules[0].b = newRule;
 
@@ -140,6 +139,12 @@ function textToBin(text) {
 
 
 
+
+//= ideally, will set all the parameters necessary to draw the tree correctly including:
+// branch length,
+// angle
+// trunk thickness
+// depth-associated branch width factor
 
 function setTreeParameters(){
 

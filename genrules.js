@@ -154,7 +154,7 @@ function removeEmptyBrackets(string){ // performs: `[]F -> F` and `[[F]] -> F`
                 string = deleteChar(string, n);
 
                 if (closeSide.length > 0) {
-                    closeSide = closeSide.map( i => i-2 ); // lower each remaining element's value
+                    closeSide = closeSide.map( i => i-2 ); // lower each remaining element's location
                 }
             }
         }
@@ -173,7 +173,7 @@ function removeRepeatRotation(string){ // function to convert things like `+-+-+
 
 
     var letter;
-    for (var n = string.length - 1; n >= 0; n--){  // traverse the string backwards
+    for (let n = string.length - 1; n >= 0; n--){  // traverse the string backwards
         letter = string.charAt(n);
 
         if      (letter == "+") plus.push(n);  // remember the position
@@ -211,7 +211,7 @@ function removeExcessRotation(string){
     var foundF = false;
 
     var letter;
-    for (var n = string.length - 1; n >= 0; n--){
+    for (let n = string.length - 1; n >= 0; n--){
         letter = string.charAt(n);
 
         if (letter == "]"){
@@ -229,14 +229,14 @@ function removeExcessRotation(string){
 function stringAnalysis(string){
 
     // consectives here refers to how many of these characters are encounted up to that point in the string.
-    // only close brackets reverse teh count
+    // only close brackets reverse the count
 
-    var consecutives = {"F": [], "+": [], "-": []}
-    var count        = {"F": 0, "+": 0, "-": 0}
-    var temp         = {"F": [0], "+": [0], "-": [0]}
+    var consecutives = {"F": [],    "+": [],    "-": []}
+    var count        = {"F": 0,     "+": 0,     "-": 0}
+    var temp         = {"F": [0],   "+": [0],   "-": [0]}
 
     var letter;
-    for (var n = 0; n < string.length; n++){
+    for (let n = 0; n < string.length; n++){
 
         letter = string.charAt(n);
 

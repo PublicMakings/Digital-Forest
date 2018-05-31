@@ -76,8 +76,8 @@ function draw(){
 
     // binary background text
     if (hasSubmitted) {
-        // textFont('Georgia',15);
-        strokeWeight(.7);
+        textFont('Georgia',15);
+        strokeWeight(.5);
         fill(200, 50);
         textAlign(CENTER, CENTER);
         text(bintext, 0,0, width, height);
@@ -230,7 +230,7 @@ function rhizome(gravity,       // grows up (1) or down (-1)
     var trunk;
 
     push();
-    for(var i = 0; i < charCount; i++){
+    for(let i = 0; i < charCount; i++){
         current = lsystem.charAt(i);
 
         trunk = (i < 2);
