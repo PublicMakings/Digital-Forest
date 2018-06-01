@@ -1,17 +1,22 @@
-// based on code by Daniel Shiffman
-// https://github.com/shiffman/A2Z-F16
-
+//Global variables
+var intro;
+var instructions = ['Welcome.','This Arboretum is a reflection about how we, as humans, tell stories about our relationship to  trees. how we think of them and how they think of us.\n The series of questions asked are intended to evoke memories of encountering trees. This site gathers these narratives into a digital repository propogated with a series of digital trees and text.','From the text you submit a seed of a digital tree is formulated. The seed grows through a process of chance operations and a Lindenmayer system, a type of formal grammar which acts a mechanism for translating lists of characters into geometric structures.\n L-systems were developed by Aristid Lindenmayer, a theoretical biologist and botanist. Lindenmayer used L-systems to describe the behaviour of plant cells and to model the growth processes of plant development.', 'Think about times you have been in forests.'];
 // Get input from user
-var treeTxt;
-var humanTxt;
+var seedTxt = [];
+var seed = '';
+var button;
 
 // Keep list of DOM elements for clearing later when reloading
 var listItems = [];
 var database;
+var clicks = 0;
 
-function setup() {    
-    
-//credentials    
+var sunlight = false;
+
+
+function setup() {
+createCanvas(windowWidth, windowHeight);
+
  // Initialize Firebase
   var config = {
     apiKey: "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
@@ -21,23 +26,82 @@ function setup() {
     storageBucket: "",
     messagingSenderId: "966863363583"
   };
-  
-    
   firebase.initializeApp(config);
   database = firebase.database();
-
-  // Input fields
-  treeTxt = select('#tree');
-  humanTxt = select('#human');
-
-  // Submit button
-  var submit = select('#submit');
-  submit.mousePressed(patterning);
-
   // Start loading the data
   loadFirebase();
+    
+// set up DOM
+    intro = createP('Welcome.').id('body');
+
 }
 
+function draw(){
+    background(255);
+    frameRate(1);
+    background(60,255/noise(frameCount%8),20,10);
+    if(sunlight){
+      var dapple = random(noise(frameCount%7))*6;
+      background(40,30*dapple+100+random(15),30,6);
+      var flicker = floor(random(4));
+      if(flicker == 3){
+      fill(175,random(200,255),40,11);
+      noStroke();
+      rect(0,0,width,height);
+      }
+    }
+}
+ 
+function mousePressed(){
+   //could eventually do this with a loop and an array of element types and content
+    clicks += 1;
+    print('click '+ clicks);
+    
+    for(var i=0;i<instructions.length;i++){
+      if(clicks == i){
+        intro.remove();
+        intro = createP(instructions[i]).id('body')
+      }else if(clicks == instructions.length){
+        sunlight = true;
+      }
+    }
+        
+    if(clicks == instructions.length+1){
+        gatherInput();
+        createElement('br')
+        button = createButton('submit');
+        button.mousePressed(saveText);
+    }
+   
+}
+
+function gatherInput(){
+      var questions = [['Think of a specific memory in a forest. <br> What do you remember about the trees?<br>Write about that memory.',"What was the weather?\nWhat color was the light?\nWho was there?\nWhat did you smell?\nWhat were you doing?"],['c','d']];
+      intro.remove();
+      for(var i = 0; i<questions.length;i++){
+      intro = createP(questions[i][0]).id('instructions');
+      seedTxt[i] = createElement('textarea',questions[i][1], ).id('corpora');
+      seedTxt[i].mouseOver(cleartxt);
+      }
+}
+function cleartxt(){
+    for(var i = 0; i<seedTxt.length; i++){
+    seedTxt[i].html('');
+    }
+}
+
+function saveText(){
+
+    for(var i = 0; i<seedTxt.length; i++){
+      seed = seed.concat(seedTxt[i].value(),' ');
+      print(seed);
+      seedTxt[i].remove();
+    }
+      intro.remove();
+      removeElements();
+      patterning();
+}
+    
 function loadFirebase() {
   var ref = database.ref("patterns");
     //ping when there is new data.
@@ -63,8 +127,8 @@ function patterning() {
     var trees = database.ref('patterns');
     
     var pattern = {
-        tree: treeTxt.value(), 
-        human: humanTxt.value(), 
+        tree: seed, 
+        human: 'pip', 
         seed:random(60),
         fork1:random(8,17),
 //        fork2:random(pattern.fork1-1,patern.fork1+3,),
@@ -74,8 +138,13 @@ function patterning() {
     var tree = trees.push(pattern, finished);
     console.log("imagined tree" + tree.key);
     
-//error handling    
-  function finished(err) {
+
+////////////////////
+//helpers
+
+// error hanlding
+ 
+function finished(err) {
     if (err) {
       console.log("ooops, something went wrong.");
       console.log(err);
@@ -84,11 +153,7 @@ function patterning() {
     }
   }
 }
-
-////////////////////
-//helpers
-
-// error hanlding
+       
 function errData(error) {
   console.log("Something went wrong.");
   console.log(error);
