@@ -17,7 +17,8 @@ function forestStory(){
 
     var newRule = "";
 
-    txt = textField.value();
+    txt = seed;
+//    txt = textField.value(); 
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
 

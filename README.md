@@ -3,11 +3,16 @@ p5.js interactive artwork about narratives of trees.
 
 ## ToDos'
 ### *Coding*
+
+- [ ] add axiom stringto binary background
+- [ ] translucent mask over introductory tree
+- [ ] display text at the bottom
+
 - [ ] sanitize filter
 - [ ] Binary background
 - [ ] eventually create a token for writing to the database?
 
-- [ ] figure out firebase better, [security  rules](https://gist.github.com/codediodeio/6dbce1305b9556c2136492522e2100f6)
+- [x] figure out firebase better, [security  rules](https://gist.github.com/codediodeio/6dbce1305b9556c2136492522e2100f6)
     * more [firebase security stuff](https://www.linkedin.com/pulse/can-cloud-functions-firebase-secure-way-hide-api-keys-mayur-dube)
     * [firebase api refering websites](https://stackoverflow.com/questions/35418143/how-to-restrict-firebase-data-modification)
 
@@ -16,13 +21,14 @@ p5.js interactive artwork about narratives of trees.
 ### *Writing*
 - [ ] make interview questions
 - [x] Credits for index
-- [ ] Format for Letterpress
-- [ ] translate core architecture into opaque poetics
+- [x] Format for Letterpress
+- [x] translate core architecture into opaque poetics
 - [ ] proofread
 
 
 
 # References
+* [Wind sway](https://github.com/cleziole/l-system)
 * [interactives](https://github.com/nylki/lindenmayer)
 * [codepen](https://codepen.io/ada-lovecraft/pen/WxbRGM)
 * [three.js coordinate generator](http://yuvadm.github.io/lsys.js/)
