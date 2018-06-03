@@ -52,22 +52,22 @@ function setup() {
 //    createCanvas(windowWidth, windowHeight);
 
  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
-    authDomain: "digital-forester.firebaseapp.com",
-    databaseURL: "https://digital-forester.firebaseio.com",
-    projectId: "digital-forester",
-    storageBucket: "",
-    messagingSenderId: "966863363583"
-  };
-  firebase.initializeApp(config);
-  database = firebase.database();
-  // Start loading the data
-  loadFirebase();
-    
-// set up DOM
+     var config = {
+        apiKey: "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
+        authDomain: "digital-forester.firebaseapp.com",
+        databaseURL: "https://digital-forester.firebaseio.com",
+        projectId: "digital-forester",
+        storageBucket: "",
+        messagingSenderId: "966863363583"
+    }
+    firebase.initializeApp(config);
+    database = firebase.database();
+    // Start loading the data
+    loadFirebase();
+
+    // set up DOM
     intro = createP('Welcome.').id('body');
-    
+
     growthRing();
 } //end of setup
 
@@ -84,49 +84,43 @@ function draw(){
         fill(200, 50);
         textAlign(CENTER, CENTER);
         text(bintext, 0,0, width, height);
-        
-        
+
+
 // AO did I move this to a funny place?
            // mask the text
-    fill(255);
-    strokeWeight(2);
-    stroke(100, 100);
-    CircleMask(0.95);
+        fill(255);
+        strokeWeight(2);
+        stroke(100, 100);
+        CircleMask(0.95);
 
         //caption
-//        
+//
 //        push();
 //        noStroke();
 //        translate(0,450);
-//        fill(100,155,50,190);        
+//        fill(100,155,50,190);
 //        textAlign(LEFT);
 //        text(seed,50,0);
 //        pop();
+
+
+
+
+        // update values:
+        updateWind();
+    //     increment_char();
+        fullGrowth(); // temporary so we can see the full tree
+
+        resetMatrix();
+        translate(width/2, treeLoc*height);
+        sproutBranches(1, len, char_n, branchings, 2, woodCol);
+        if (drawRoots) hyphae();
     }
-
- 
-    
-    // update values:
-    updateWind();
-//     increment_char();
-    fullGrowth(); // temporary
-
-    resetMatrix();
-    translate(width/2, treeLoc*height);
-    sproutBranches(1, len, char_n, branchings, 2, woodCol);
-    if (drawRoots) {hyphae();}
-
 
 }
 
 function growthRing(){
     clearCanvas();
-
-// circle mask
-    masque = createGraphics(width,height);
-    ring =  createGraphics(width,height);
-
-
 
     frameRate(100);
     angle = radians(17);
@@ -144,10 +138,10 @@ function growthRing(){
 
     CircleMask();
 
-// TEXT INPUT 
-}  
+// TEXT INPUT
+}
 
-//AO bit 
+//AO bit
 function introduction(){
     background(255);
     frameRate(20);
@@ -164,7 +158,7 @@ function introduction(){
     }
 }
 
-
+// debugging function. TODO: remember to disable for final
 function keyReleased(){
 
     if (keyCode === UP_ARROW){
@@ -175,8 +169,6 @@ function keyReleased(){
         maxDepth -= 1;
         resetLSystems();
     }
-
-
 }
 
 
@@ -186,7 +178,7 @@ function keyReleased(){
 
 
 function updateWind(){
-    windFactor = 1 + sin(d)/20;
+    windFactor = 1 + sin(d)/60;
     d += noise(d)/8;
 }
 
@@ -224,7 +216,7 @@ function CircleMask(factor){
 
     // circular contour
     beginContour();
-    for (var theta = TWO_PI; theta > 0; theta -= TWO_PI/50){
+    for (var theta = TWO_PI; theta > 0; theta -= TWO_PI/60){
         vertex(rx*cos(theta) + width/2,
                ry*sin(theta) + height/2);
     }
@@ -355,6 +347,7 @@ function growthRules(letter, branchLength, depthFactor, gravity){
 }
 
 
+// for debugging
 function toggleRoots(){ drawRoots = !drawRoots; }
 
 
@@ -364,109 +357,109 @@ function toggleRoots(){ drawRoots = !drawRoots; }
 function mousePressed(){
     clicks += 1;
 //    print('click '+ clicks);
-    
+
     for(var i=0;i<instructions.length;i++){
-      if(clicks == i){
-        intro.remove();
-        intro = createP(instructions[i]).id('body')
-      }else if(clicks == instructions.length){
-        sunlight = true;
-      }
+        if(clicks == i){
+            intro.remove();
+            intro = createP(instructions[i]).id('body')
+        }else if(clicks == instructions.length){
+            sunlight = true;
+        }
     }
-        
+
     if(clicks == instructions.length+1){
         gatherInput();
         createElement('br')
         button = createButton('submit');
         button.mousePressed(saveText);
     }
-   
+
 }
 
 function gatherInput(){
-      var questions = [['Think of a specific memory in a forest. <br> What do you remember about the trees?<br>Write about that memory.',"What was the weather?\nWhat color was the light?\nWho was there?\nWhat did you smell?\nWhat were you doing?"],['Rewrite this story from the point of view of a tree.','What do you think think the tree remembers about you?\nHow does the tree remember?']];
-      intro.remove();
-      for(var i = 0; i<questions.length;i++){
-      intro = createP(questions[i][0]).id('instructions');
-      seedTxt[i] = createElement('textarea',questions[i][1], ).id('corpora');
-      seedTxt[i].mousePressed(cleartxt);
-      }
+    var questions = [['Think of a specific memory in a forest. <br> What do you remember about the trees?<br>Write about that memory.',"What was the weather?\nWhat color was the light?\nWho was there?\nWhat did you smell?\nWhat were you doing?"],['Rewrite this story from the point of view of a tree.','What do you think think the tree remembers about you?\nHow does the tree remember?']];
+    intro.remove();
+    for(var i = 0; i<questions.length;i++){
+        intro = createP(questions[i][0]).id('instructions');
+        seedTxt[i] = createElement('textarea',questions[i][1], ).id('corpora');
+        seedTxt[i].mousePressed(cleartxt);
+    }
 }
 function cleartxt(){
     for(var i = 0; i<seedTxt.length; i++){
-    seedTxt[i].html('');
+        seedTxt[i].html('');
     }
 }
 
 function saveText(){
 
     for(var i = 0; i<seedTxt.length; i++){
-      seed = seed.concat(seedTxt[i].value(),' ');
-      print(seed);
-      seedTxt[i].remove();
+        seed = seed.concat(seedTxt[i].value(),' ');
+        print(seed);
+        seedTxt[i].remove();
     }
-      intro.remove();
-      removeElements();
-      patterning();
-     forestStory(seed);
-     wander();
+
+    intro.remove();
+    removeElements();
+    patterning();
+    forestStory(seed);
+    wander();
 }
-    
+
 function loadFirebase() {
-  var ref = database.ref("patterns");
+    var ref = database.ref("patterns");
     //ping when there is new data.
-  ref.on("value", gotData, errData);
+    ref.on("value", gotData, errData);
 }
 
 // The data comes back as an object
 var keys, lSystem;
 function gotData(data) {
-  lSystem = data.val();
-  keys = Object.keys(lSystem);
-  console.log(lSystem);
- 
-  
-  console.log(keys);
-    
-  console.log(data);    
+
+    lSystem = data.val();
+    keys = Object.keys(lSystem);
+
+    console.log(lSystem);
+    console.log(keys);
+    console.log(data);
 }
 
 // sends data to firebase
 function patterning() {
     var trees = database.ref('patterns');
-    
+
     var pattern = {
         // don't change these parameters without letting AO know, the firebase server will need some security rules changed
-        tree: branchings, 
-        human: seed, 
+        // TA: what is this exactly? Are these what the variables are called on the server side? Can't we name them the same thing for simplicity?
+        tree: branchings,
+        human: seed,
         seed:random(60),
         fork1:random(8,17),
 //        fork2:random(pattern.fork1-1,patern.fork1+3,),
         length:random(height/random(8,14))
     }
-    
+
     var tree = trees.push(pattern, finished);
     console.log("imagined tree" + tree.key);
-    
+}
 
 ////////////////////
 //helpers
 
 // error hanlding
- 
+
 function finished(err) {
     if (err) {
-      console.log("ooops, something went wrong.");
-      console.log(err);
+        console.log("ooops, something went wrong.");
+        console.log(err);
     } else {
-      console.log('tree is in the preserve.');
+        console.log('tree is in the preserve.');
     }
-  }
 }
-       
+
 function errData(error) {
-  console.log("Something went wrong.");
-  console.log(error);
+    console.log("Something went wrong.");
+    console.log(error);
 }
 
 

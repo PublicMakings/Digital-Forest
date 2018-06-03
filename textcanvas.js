@@ -17,10 +17,10 @@ function forestStory(txt){
     hasSubmitted = true;
 
     var newRule = "";
-    
+
 //    txt = seed;
   caption = createElement('p1',txt).id('caption').parent('captions');
-//  
+//
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
 
@@ -80,74 +80,12 @@ function textToBin(text) {
 
 
 
-// brackets must all be closed for this function to work I think
-// function removeUselessBrackets(string){
-
-//     var open = 0;
-
-//     var locright = [];
-//     var foundF = [];
-//     var foundAny = [];
-//     var letter;
-
-//     for (var n = string.length - 1; n >= 0; n++){
-//         letter = string.charAt(n);
-
-//         if (letter == "]"){
-//             open += 1;
-//             foundF.push(false);
-//             foundAny.push(false);
-//             locright.push(n);
-//         }
-//         else if (letter == "[") {
-
-//             if !(foundF[foundF.length]){
-
-//             }
-
-//             open -= 1;
-//             locright.pop();
-//             foundF.pop();
-//             foundAny.pop();
-//         }
-//         else{ //not a bracket
-//             foundAny.push(true);
-//         }
-
-//         if (open > 0){
-
-//         // when you find an F, all previous (i.e. more "external") layers become true as well
-//         // consider [+[F]] for reasoning.
-//         // `foundAny` is then necessary to correct the [[F]] case
-//         if (letter == "F"){
-//             for (var i = 0; i < foundF.length; i++){
-//                 foundF[i] = true;
-//             }
-//         }
-
-
-//             if !(foundF[foundF.length]){
-//                 if (isAngleCharacter(letter)){   // if it's not a drawing character or bracket
-
-//                     string = string.slice(n) + string.slice(n + 1); // remove that character (e.g. n = 0 would remove the first)
-//                 }
-//             }
-
-//         }
-
-//     }
-
-//     return (left - right);
-// }
-
-
-
-
-//= ideally, will set all the parameters necessary to draw the tree correctly including:
-// branch length,
-// angle
-// trunk thickness
-// depth-associated branch width factor
+//= ideally, this function will set all the parameters necessary to draw the tree correctly including:
+// - branch length,
+// - angle
+// - trunk thickness
+// - depth-associated branch width factor
+// using only the brachings string (or the rule) as a guide.
 
 function setTreeParameters(){
 
@@ -164,6 +102,7 @@ function setTreeParameters(){
     len = random(0.8*baseLength, 1.3*baseLength);
 }
 
+// redo this to include rotation also (i.e. effective length).
 function setLen(n_Fs){
     return len = 0.9 * height/(2*n_Fs);
 }
