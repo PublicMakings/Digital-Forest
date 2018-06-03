@@ -217,7 +217,7 @@ function removeRepeatRotation(string){ // function to convert things like `+-+-+
 
                 // combine the coordinates of however many (e.g. cancels = 2) pluses and minuses
                 var indices = concat(plus.slice(0, cancels), minus.slice(0, cancels));
-                indices.sort();
+                indices.sort( (a,b) => a-b );
                 indices.reverse(); // now the indices are arranged largest to smallest (important for deletions to occur correctly).
 
                 for (var i = 0; i < indices.length; i++){
