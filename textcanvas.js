@@ -10,14 +10,17 @@ var hasSubmitted = false;
 
 var delimiters = [" ", ",", "\n", ".", "\t", ":", ";", "?", "!", "'"];
 
+var caption
+function forestStory(txt){
 
-function forestStory(){
 
     hasSubmitted = true;
 
     var newRule = "";
-
-    txt = textField.value();
+    
+//    txt = seed;
+  caption = createElement('p1',txt).id('caption').parent('captions');
+//  
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
 

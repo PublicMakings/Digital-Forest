@@ -1,4 +1,4 @@
-//Based on the L-System implementation by Daniel Shiffman
+//Based on the L-System implementation by Daniel Shiffman and Mathias Ali (http://codepen.io/Bagaboo/pen/VPZQOb)
 
 // TREE THINGS
 
