@@ -49,9 +49,8 @@ rules[0] = {
 
 
 function setup() {
-//    createCanvas(windowWidth, windowHeight);
 
- // Initialize Firebase
+    // Initialize Firebase
      var config = {
         apiKey: "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
         authDomain: "digital-forester.firebaseapp.com",
@@ -60,6 +59,7 @@ function setup() {
         storageBucket: "",
         messagingSenderId: "966863363583"
     }
+
     firebase.initializeApp(config);
     database = firebase.database();
     // Start loading the data
@@ -77,17 +77,15 @@ function draw(){
     clearCanvas();
     resetMatrix();
 
-//     binary background text
+    // if the user has submitted, draw their tree and their binary background
     if (hasSubmitted) {
         textFont('Georgia',15);
         strokeWeight(.5);
-        fill(200, 50);
+        fill(220, 30);
         textAlign(CENTER, CENTER);
         text(bintext, 0,0, width, height);
 
-
-// AO did I move this to a funny place?
-           // mask the text
+        // mask the text
         fill(255);
         strokeWeight(2);
         stroke(100, 100);
@@ -108,8 +106,8 @@ function draw(){
 
         // update values:
         updateWind();
-    //     increment_char();
-        fullGrowth(); // temporary so we can see the full tree
+        // increment_char();
+        fullGrowth(); // temporary so we can see the full tree for rule developement
 
         resetMatrix();
         translate(width/2, treeLoc*height);
@@ -119,6 +117,8 @@ function draw(){
 
 }
 
+
+// overall setup function
 function growthRing(){
     clearCanvas();
 
@@ -135,10 +135,6 @@ function growthRing(){
 
     noiseSeed(42);
     randomSeed(42);
-
-    CircleMask();
-
-// TEXT INPUT
 }
 
 //AO bit
@@ -178,13 +174,13 @@ function keyReleased(){
 
 
 function updateWind(){
-    windFactor = 1 + sin(d)/60;
+    windFactor = 1 + sin(d)/90;
     d += noise(d)/8;
 }
 
 function increment_char(){
     if (char_n < branchings.length) char_n += 1;
-    if (root_n < roots.length) root_n += 1;
+    if (root_n < roots.length)      root_n += 1;
 }
 function resetCharCount(){
     char_n = 0;
@@ -264,6 +260,7 @@ function generate(sentence){
 }
 
 
+// convenience application of the `rhizome` function
 function sproutRoots(){
     rhizome(-1, len, root_n, roots,      rootDepthFactor,   rootCol);
 }
@@ -323,7 +320,7 @@ function hyphae(){ // draws the roots portion by reversing the growth direction 
 
 function growthRules(letter, branchLength, depthFactor, gravity){
 
-    var local_wind = gravity > 0 ? windFactor : 1;
+    var local_wind = (gravity > 0) ? windFactor : 1; // roots don't sway
 
 
     strokeWeight(branchWidth);
@@ -335,7 +332,7 @@ function growthRules(letter, branchLength, depthFactor, gravity){
     }
     else if (letter == "+") rotate(angle * local_wind);
     else if (letter == "-") rotate(-angle * local_wind);
-    else if (letter == "G") rotate(-angle + local_wind/GminusRatio);
+    else if (letter == "G") rotate(-angle + Math.sign(angle)*(local_wind/GminusRatio));
     else if (letter == "["){
         push();
         branchWidth /= depthFactor;
@@ -359,10 +356,12 @@ function mousePressed(){
 //    print('click '+ clicks);
 
     for(var i=0;i<instructions.length;i++){
+
         if(clicks == i){
             intro.remove();
             intro = createP(instructions[i]).id('body')
-        }else if(clicks == instructions.length){
+        }
+        else if(clicks == instructions.length){
             sunlight = true;
         }
     }
