@@ -49,7 +49,7 @@ rules[0] = {
 
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+//    createCanvas(windowWidth, windowHeight);
 
  // Initialize Firebase
   var config = {
@@ -68,12 +68,6 @@ function setup() {
 // set up DOM
     intro = createP('Welcome.').id('body');
     
-// AO turned off    
-    // get input text
-//    textField = select("#textbox");
-//    submit = select("#button");
-//
-//    submit.mousePressed(forestStory);
     growthRing();
 } //end of setup
 
@@ -91,13 +85,23 @@ function draw(){
         textAlign(CENTER, CENTER);
         text(bintext, 0,0, width, height);
         
+        
+// AO did I move this to a funny place?
            // mask the text
     fill(255);
     strokeWeight(2);
     stroke(100, 100);
     CircleMask(0.95);
-        
 
+        //caption
+//        
+//        push();
+//        noStroke();
+//        translate(0,450);
+//        fill(100,155,50,190);        
+//        textAlign(LEFT);
+//        text(seed,50,0);
+//        pop();
     }
 
  
@@ -359,7 +363,7 @@ function toggleRoots(){ drawRoots = !drawRoots; }
 
 function mousePressed(){
     clicks += 1;
-    print('click '+ clicks);
+//    print('click '+ clicks);
     
     for(var i=0;i<instructions.length;i++){
       if(clicks == i){
@@ -404,8 +408,8 @@ function saveText(){
       intro.remove();
       removeElements();
       patterning();
-     forestStory();
-     
+     forestStory(seed);
+     wander();
 }
     
 function loadFirebase() {
@@ -415,17 +419,16 @@ function loadFirebase() {
 }
 
 // The data comes back as an object
+var keys, lSystem;
 function gotData(data) {
-  var lSystem = data.val();
-  var keys = Object.keys(lSystem);
+  lSystem = data.val();
+  keys = Object.keys(lSystem);
   console.log(lSystem);
+ 
   
   console.log(keys);
-//    pick a random key
-  console.log(keys[floor(random(keys.length))]);    
-//    how to get that data?
     
-    
+  console.log(data);    
 }
 
 // sends data to firebase
@@ -433,8 +436,9 @@ function patterning() {
     var trees = database.ref('patterns');
     
     var pattern = {
-        tree: seed, 
-        human: 'pip', 
+        // don't change these parameters without letting AO know, the firebase server will need some security rules changed
+        tree: branchings, 
+        human: seed, 
         seed:random(60),
         fork1:random(8,17),
 //        fork2:random(pattern.fork1-1,patern.fork1+3,),
