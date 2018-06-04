@@ -52,12 +52,12 @@ function setup() {
 
     // Initialize Firebase
      var config = {
-        apiKey: "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
-        authDomain: "digital-forester.firebaseapp.com",
-        databaseURL: "https://digital-forester.firebaseio.com",
-        projectId: "digital-forester",
-        storageBucket: "",
-        messagingSenderId: "966863363583"
+        apiKey:             "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
+        authDomain:         "digital-forester.firebaseapp.com",
+        databaseURL:        "https://digital-forester.firebaseio.com",
+        projectId:          "digital-forester",
+        storageBucket:      "",
+        messagingSenderId:  "966863363583"
     }
 
     firebase.initializeApp(config);
@@ -66,7 +66,7 @@ function setup() {
     loadFirebase();
 
     // set up DOM
-    intro = createP('Welcome.').id('body');
+    intro = createP('Welcome (click).').id('body');
 
     growthRing();
 } //end of setup
@@ -81,11 +81,13 @@ function draw(){
     if (hasSubmitted) {
         textFont('Georgia',15);
         strokeWeight(.5);
-        fill(220, 30);
+        fill(220, 90);
+        stroke(220, 90);
         textAlign(CENTER, CENTER);
         text(bintext, 0,0, width, height);
 
-        // mask the text
+
+        /////// mask the text
         fill(255);
         strokeWeight(2);
         stroke(100, 100);
@@ -100,19 +102,24 @@ function draw(){
 //        textAlign(LEFT);
 //        text(seed,50,0);
 //        pop();
+    }
 
+    /////// draw the tree
+    // update values:
+    updateWind();
+    // increment_char();
+    fullGrowth(); // temporary so we can see the full tree for rule developement
 
+    resetMatrix();
+    translate(width/2, treeLoc*height);
+    sproutBranches(1, len, char_n, branchings, 2, woodCol);
+    if (drawRoots) hyphae();
 
-
-        // update values:
-        updateWind();
-        // increment_char();
-        fullGrowth(); // temporary so we can see the full tree for rule developement
-
-        resetMatrix();
-        translate(width/2, treeLoc*height);
-        sproutBranches(1, len, char_n, branchings, 2, woodCol);
-        if (drawRoots) hyphae();
+    if (!hasSubmitted){
+        translate(width/2, height/2)
+        fill(255, 160);
+        noStroke();
+        ellipse(0, 0, width*0.95, height*0.95); // translucent center
     }
 
 }
@@ -430,10 +437,10 @@ function patterning() {
     var pattern = {
         // don't change these parameters without letting AO know, the firebase server will need some security rules changed
         // TA: what is this exactly? Are these what the variables are called on the server side? Can't we name them the same thing for simplicity?
-        tree: branchings,
-        human: seed,
-        seed:random(60),
-        fork1:random(8,17),
+        tree:   branchings,
+        human:  seed,
+        seed:   random(60),
+        fork1:  random(8,17),
 //        fork2:random(pattern.fork1-1,patern.fork1+3,),
         length:random(height/random(8,14))
     }
