@@ -18,14 +18,24 @@ function wander(){
         arboretum[i] = createDiv(i).parent('nursery').id('saplings');
 
         //this is supposed to call the old tree files
-        arboretum[i].mouseClicked(specimums);
+        arboretum[i].mouseClicked(specimens);
     }
 }
 
-function specimums(evt){
+function specimens(evt){
     //this gets the number of the div and that can index humanstories and treestories
     const num = +evt.target.textContent;
     print(treeStories[num]);
+
+    displayStoredTree(num);
+}
+
+function displayStoredTree(num){
+
+    branchings = treeStories[num];
+    txt = humanStories[num];
+    bintext = textToBin(txt);
+    setTreeParameters();
 
     caption.html(humanStories[num]);
 }

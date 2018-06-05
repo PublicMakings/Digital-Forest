@@ -2,7 +2,7 @@
 // TEXT INPUT
 
 var textField;
-var submit;
+var submit, wanderbutton, treebutton;
 var txt, bintext;
 
 var hasSubmitted = false;
@@ -19,7 +19,7 @@ function forestStory(txt){
     var newRule = "";
 
 //    txt = seed;
-  caption = createElement('p1',txt).id('caption').parent('captions');
+    caption = createElement('p1',txt).id('caption').parent('captions');
 //
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);

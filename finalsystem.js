@@ -12,9 +12,14 @@ var button;
 var listItems = [];
 var database;
 var clicks = 0;
+var creating = false;
 
 var sunlight = false;
 
+// add `wander arboretrum` and `create tree` button
+// F string background
+// if condition on submission
+// organize all globals to live up here, or preferably them up into groups and make singleton classes for them
 
 // TREE THINGS
 
@@ -51,13 +56,13 @@ rules[0] = {
 function setup() {
 
     // Initialize Firebase
-     var config = {
-        apiKey:             "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
-        authDomain:         "digital-forester.firebaseapp.com",
-        databaseURL:        "https://digital-forester.firebaseio.com",
-        projectId:          "digital-forester",
-        storageBucket:      "",
-        messagingSenderId:  "966863363583"
+    var config = {
+        apiKey:            "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
+        authDomain:        "digital-forester.firebaseapp.com",
+        databaseURL:       "https://digital-forester.firebaseio.com",
+        projectId:         "digital-forester",
+        storageBucket:     "",
+        messagingSenderId: "966863363583"
     }
 
     firebase.initializeApp(config);
@@ -66,25 +71,36 @@ function setup() {
     loadFirebase();
 
     // set up DOM
-    intro = createP('Welcome (click).').id('body');
+    intro = createP('Welcome.').id('body');
+    wanderbutton = createButton('Wander Arboretum');
+    treebutton   = createButton('Create Tree');
+    wanderbutton.mousePressed(toggleWander);
+    treebutton.mousePressed(toggleCreate);
 
     growthRing();
+
 } //end of setup
 
 
 function draw(){
-//    introduction();
     clearCanvas();
     resetMatrix();
 
-    // if the user has submitted, draw their tree and their binary background
+    // introduction();
+
+    // if the user has submitted, draw their tree and their binary/string background
     if (hasSubmitted) {
-        textFont('Georgia',15);
+
+        textFont('Georgia', 15);
         strokeWeight(.5);
-        fill(220, 90);
-        stroke(220, 90);
+        fill(220, 220, 240, 90);
+        stroke(220, 220, 240, 90);
         textAlign(CENTER, CENTER);
-        text(bintext, 0,0, width, height);
+        text(bintext, 0, 0, width, height);
+
+        fill(220, 220, 200, 90);
+        stroke(220, 220, 200, 90);
+        text(branchings, 0, 0, width, height);
 
 
         /////// mask the text
@@ -92,16 +108,6 @@ function draw(){
         strokeWeight(2);
         stroke(100, 100);
         CircleMask(0.95);
-
-        //caption
-//
-//        push();
-//        noStroke();
-//        translate(0,450);
-//        fill(100,155,50,190);
-//        textAlign(LEFT);
-//        text(seed,50,0);
-//        pop();
     }
 
     /////// draw the tree
@@ -116,10 +122,9 @@ function draw(){
     if (drawRoots) hyphae();
 
     if (!hasSubmitted){
-        translate(width/2, height/2)
         fill(255, 160);
         noStroke();
-        ellipse(0, 0, width*0.95, height*0.95); // translucent center
+        rect(0, 0, width, height);
     }
 
 }
@@ -144,20 +149,42 @@ function growthRing(){
     randomSeed(42);
 }
 
+// the two modes
+function toggleWander(){
+
+    hasSubmitted = true;
+    wander();
+
+    displayStoredTree(0); // display the first tree
+
+    wanderbutton.remove();
+    treebutton.remove();
+}
+function toggleCreate(){
+
+    creating = true;
+
+    wanderbutton.remove();
+    treebutton.remove();
+}
+
 //AO bit
+// TA: should this run always or just during the "introduction phase"
 function introduction(){
+
     background(255);
     frameRate(20);
-    background(60,255/noise(frameCount%8),20,10);
+    background(60, 255/noise(frameCount%8), 20, 10);
+
     if(sunlight){
-      var dapple = random(noise(frameCount%7))*6;
-      background(40,30*dapple+100+random(15),30,6);
-      var flicker = floor(random(4));
-      if(flicker == 3){
-      fill(175,random(200,255),40,11);
-      noStroke();
-      rect(0,0,width,height);
-      }
+        var dapple = random(noise(frameCount%7))*6;
+        background(40, 30*dapple+100+random(15), 30, 6);
+        var flicker = floor(random(4));
+        if(flicker == 3){
+            fill(175, random(200,255), 40, 11);
+            noStroke();
+            rect(0, 0, width, height);
+        }
     }
 }
 
@@ -359,56 +386,73 @@ function toggleRoots(){ drawRoots = !drawRoots; }
 
 
 function mousePressed(){
-    clicks += 1;
-//    print('click '+ clicks);
 
-    for(var i=0;i<instructions.length;i++){
+    if (!hasSubmitted && creating){
+        clicks += 1;
+    //    print('click '+ clicks);
 
-        if(clicks == i){
-            intro.remove();
-            intro = createP(instructions[i]).id('body')
+        for(var i = 0; i < instructions.length; i++){
+
+            if(clicks == i){
+                intro.remove();
+                intro = createP(instructions[i]).id('body')
+            }
+            else if(clicks == instructions.length){
+                sunlight = true;
+            }
         }
-        else if(clicks == instructions.length){
-            sunlight = true;
+
+        if(clicks == instructions.length+1){
+            gatherInput();
+            createElement('br')
+            button = createButton('submit');
+            button.mousePressed(saveText);
         }
     }
-
-    if(clicks == instructions.length+1){
-        gatherInput();
-        createElement('br')
-        button = createButton('submit');
-        button.mousePressed(saveText);
-    }
-
 }
 
 function gatherInput(){
-    var questions = [['Think of a specific memory in a forest. <br> What do you remember about the trees?<br>Write about that memory.',"What was the weather?\nWhat color was the light?\nWho was there?\nWhat did you smell?\nWhat were you doing?"],['Rewrite this story from the point of view of a tree.','What do you think think the tree remembers about you?\nHow does the tree remember?']];
+    var questions = [
+                        ['Think of a specific memory in a forest.'   +
+                         '\nWhat do you remember about the trees?'   +
+                         '\nWrite about that memory.',
+                         'What was the weather?'            +
+                         '\nWhat color was the light?'      +
+                         '\nWho was there?'                 +
+                         '\nWhat did you smell?'            +
+                         '\nWhat were you doing?'
+                         ],
+                        ['Rewrite this story from the point of view of a tree.',
+                         'What do you think think the tree remembers about you?' +
+                         '\nHow does the tree remember?'
+                          ]
+                    ];
     intro.remove();
-    for(var i = 0; i<questions.length;i++){
+    for(var i = 0; i < questions.length;i++){
         intro = createP(questions[i][0]).id('instructions');
         seedTxt[i] = createElement('textarea',questions[i][1], ).id('corpora');
         seedTxt[i].mousePressed(cleartxt);
     }
 }
 function cleartxt(){
-    for(var i = 0; i<seedTxt.length; i++){
+    for(var i = 0; i < seedTxt.length; i++){
         seedTxt[i].html('');
     }
 }
 
 function saveText(){
 
-    for(var i = 0; i<seedTxt.length; i++){
-        seed = seed.concat(seedTxt[i].value(),' ');
+    for(var i = 0; i < seedTxt.length; i++){
+        seed = seed.concat(seedTxt[i].value(), ' ');
         print(seed);
         seedTxt[i].remove();
     }
 
     intro.remove();
     removeElements();
+    forestStory(seed);  // this creates the tree from "seed"
     patterning();
-    forestStory(seed);
+
     wander();
 }
 
@@ -440,9 +484,9 @@ function patterning() {
         tree:   branchings,
         human:  seed,
         seed:   random(60),
-        fork1:  random(8,17),
+        fork1:  random(8, 17),
 //        fork2:random(pattern.fork1-1,patern.fork1+3,),
-        length:random(height/random(8,14))
+        length: random(height/random(8, 14))
     }
 
     var tree = trees.push(pattern, finished);
