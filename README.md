@@ -3,10 +3,10 @@ p5.js interactive artwork about narratives of trees.
 
 ## ToDos'
 ### *Coding*
-- [ ] bring buttons into style of site
-- [ ] add permenant buttons at button
-   * a back, which resets clicks during creating
-   * a create for during wandering
+- [X] bring buttons into style of site
+- [X] add permenant buttons at button
+- [ ] add a back and next, which adjusts click count during creating
+- [ ] make create button funtion during wandering
 - [x] add axiom stringto binary background
 - [x] translucent mask over introductory tree
 - [x] display text at the bottom
