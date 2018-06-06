@@ -34,21 +34,13 @@ rules[0] = {
 
 function setup() {
 
-
     clearCanvas();
-
-// circle mask
-    masque = createGraphics(width,height);
-    ring =  createGraphics(width,height);
-
-
 
     frameRate(100);
     angle = radians(17);
 
     resetLSystems();
     setTreeParameters();
-    // print(branchings);
 
     woodCol  = color(105, 100, 60, 100);
     trunkCol = color(115, 100, 60, 220);
@@ -57,16 +49,12 @@ function setup() {
     noiseSeed(42);
     randomSeed(42);
 
-    CircleMask();
-
 // TEXT INPUT
 
     textField = select("#textbox");
     submit = select("#button");
 
     submit.mousePressed(forestStory);
-
-    textFont('Georgia',15);
 }
 
 
@@ -78,7 +66,8 @@ function draw(){
     if (hasSubmitted) {
         textFont('Georgia',15);
         strokeWeight(.5);
-        fill(200, 50);
+        stroke(200)
+        fill(200);
         textAlign(CENTER, CENTER);
         text(bintext, 0,0, width, height);
     }
@@ -86,20 +75,20 @@ function draw(){
 
     // mask the text
     fill(255);
-    strokeWeight(2);
+    strokeWeight(1.5);
     stroke(100, 100);
     CircleMask(0.95);
 
+    // ellipse(width/2, height/2, 0.92*width, 0.92*height);
     // update values:
     updateWind();
     // increment_char();
     fullGrowth(); // temporary
 
-    resetMatrix();
+    if (drawRoots) hyphae();
+
     translate(width/2, treeLoc*height);
     sproutBranches(1, len, char_n, branchings, 2, woodCol);
-    if (drawRoots) {hyphae();}
-
 }
 
 function keyReleased(){
@@ -123,7 +112,7 @@ function keyReleased(){
 
 
 function updateWind(){
-    windFactor = 1 + sin(d)/20;
+    windFactor = 1 + sin(d)/90;
     d += noise(d)/8;
 }
 
@@ -161,7 +150,7 @@ function CircleMask(factor){
 
     // circular contour
     beginContour();
-    for (var theta = TWO_PI; theta > 0; theta -= TWO_PI/50){
+    for (var theta = TWO_PI; theta > 0; theta -= TWO_PI/60){
         vertex(rx*cos(theta) + width/2,
                ry*sin(theta) + height/2);
     }
@@ -268,7 +257,7 @@ function hyphae(){ // draws the roots portion by reversing the growth direction 
 
 function growthRules(letter, branchLength, depthFactor, gravity){
 
-    var local_wind = gravity > 0 ? windFactor : 1;
+    var local_wind = (gravity > 0) ? windFactor : 1; // roots don't sway
 
 
     strokeWeight(branchWidth);
@@ -280,7 +269,7 @@ function growthRules(letter, branchLength, depthFactor, gravity){
     }
     else if (letter == "+") rotate(angle * local_wind);
     else if (letter == "-") rotate(-angle * local_wind);
-    else if (letter == "G") rotate(-angle + local_wind/GminusRatio);
+    else if (letter == "G") rotate(-angle + Math.sign(angle)*(local_wind/GminusRatio));
     else if (letter == "["){
         push();
         branchWidth /= depthFactor;
@@ -292,4 +281,6 @@ function growthRules(letter, branchLength, depthFactor, gravity){
 }
 
 
-function toggleRoots(){ drawRoots = !drawRoots; }
+function toggleRoots(){
+    drawRoots = !drawRoots;
+}

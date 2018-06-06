@@ -12,9 +12,14 @@ var button;
 var listItems = [];
 var database;
 var clicks = 0;
+var creating = false;
 
 var sunlight = false;
 
+// add `wander arboretrum` and `create tree` button
+// F string background
+// if condition on submission
+// organize all globals to live up here, or preferably them up into groups and make singleton classes for them
 
 // TREE THINGS
 
@@ -49,84 +54,85 @@ rules[0] = {
 
 
 function setup() {
-//    createCanvas(windowWidth, windowHeight);
 
- // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
-    authDomain: "digital-forester.firebaseapp.com",
-    databaseURL: "https://digital-forester.firebaseio.com",
-    projectId: "digital-forester",
-    storageBucket: "",
-    messagingSenderId: "966863363583"
-  };
-  firebase.initializeApp(config);
-  database = firebase.database();
-  // Start loading the data
-  loadFirebase();
-    
-// set up DOM
+    // Initialize Firebase
+    var config = {
+        apiKey:            "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
+        authDomain:        "digital-forester.firebaseapp.com",
+        databaseURL:       "https://digital-forester.firebaseio.com",
+        projectId:         "digital-forester",
+        storageBucket:     "",
+        messagingSenderId: "966863363583"
+    }
+
+    firebase.initializeApp(config);
+    database = firebase.database();
+    // Start loading the data
+    loadFirebase();
+
+    // set up DOM
     intro = createP('Welcome.').id('body');
-    
+    wanderbutton = createButton('Wander Arboretum');
+    treebutton   = createButton('Create Tree');
+    wanderbutton.mousePressed(toggleWander);
+    treebutton.mousePressed(toggleCreate);
+
     growthRing();
+
 } //end of setup
 
 
 function draw(){
-//    introduction();
     clearCanvas();
     resetMatrix();
 
-//     binary background text
-    if (hasSubmitted) {
-        textFont('Georgia',15);
-        strokeWeight(.5);
-        fill(200, 50);
-        textAlign(CENTER, CENTER);
-        text(bintext, 0,0, width, height);
-        
-        
-// AO did I move this to a funny place?
-           // mask the text
-    fill(255);
-    strokeWeight(2);
-    stroke(100, 100);
-    CircleMask(0.95);
+    // introduction();
 
-        //caption
-//        
-//        push();
-//        noStroke();
-//        translate(0,450);
-//        fill(100,155,50,190);        
-//        textAlign(LEFT);
-//        text(seed,50,0);
-//        pop();
+    // if the user has submitted, draw their tree and their binary/string background
+    if (hasSubmitted) {
+
+        textFont('Georgia', 15);
+        strokeWeight(.5);
+        fill(220, 220, 240, 90);
+        stroke(220, 220, 240, 90);
+        textAlign(CENTER, CENTER);
+        text(bintext, 0, 0, width, height);
+
+        fill(220, 220, 200, 90);
+        stroke(220, 220, 200, 90);
+        text(branchings, 0, 0, width, height);
+
+
+        /////// mask the text
+        fill(255);
+        strokeWeight(2);
+        stroke(100, 100);
+        CircleMask(0.95);
     }
 
- 
-    
+    /////// draw the tree
     // update values:
     updateWind();
-//     increment_char();
-    fullGrowth(); // temporary
+    // increment_char();
+    fullGrowth(); // temporary so we can see the full tree for rule developement
 
     resetMatrix();
     translate(width/2, treeLoc*height);
     sproutBranches(1, len, char_n, branchings, 2, woodCol);
-    if (drawRoots) {hyphae();}
+    if (drawRoots) hyphae();
 
+    if (!hasSubmitted){
+        fill(255, 160);
+        noStroke();
+        rect(0, 0, width, height);
+    }
 
 }
 
+
+// overall setup function
 function growthRing(){
     clearCanvas();
-
-// circle mask
-    masque = createGraphics(width,height);
-    ring =  createGraphics(width,height);
-
-
 
     frameRate(100);
     angle = radians(17);
@@ -141,30 +147,48 @@ function growthRing(){
 
     noiseSeed(42);
     randomSeed(42);
+}
 
-    CircleMask();
+// the two modes
+function toggleWander(){
 
-// TEXT INPUT 
-}  
+    hasSubmitted = true;
+    wander();
 
-//AO bit 
+    displayStoredTree(0); // display the first tree
+
+    wanderbutton.remove();
+    treebutton.remove();
+}
+function toggleCreate(){
+
+    creating = true;
+
+    wanderbutton.remove();
+    treebutton.remove();
+}
+
+//AO bit
+// TA: should this run always or just during the "introduction phase"
 function introduction(){
+
     background(255);
     frameRate(20);
-    background(60,255/noise(frameCount%8),20,10);
+    background(60, 255/noise(frameCount%8), 20, 10);
+
     if(sunlight){
-      var dapple = random(noise(frameCount%7))*6;
-      background(40,30*dapple+100+random(15),30,6);
-      var flicker = floor(random(4));
-      if(flicker == 3){
-      fill(175,random(200,255),40,11);
-      noStroke();
-      rect(0,0,width,height);
-      }
+        var dapple = random(noise(frameCount%7))*6;
+        background(40, 30*dapple+100+random(15), 30, 6);
+        var flicker = floor(random(4));
+        if(flicker == 3){
+            fill(175, random(200,255), 40, 11);
+            noStroke();
+            rect(0, 0, width, height);
+        }
     }
 }
 
-
+// debugging function. TODO: remember to disable for final
 function keyReleased(){
 
     if (keyCode === UP_ARROW){
@@ -175,8 +199,6 @@ function keyReleased(){
         maxDepth -= 1;
         resetLSystems();
     }
-
-
 }
 
 
@@ -186,13 +208,13 @@ function keyReleased(){
 
 
 function updateWind(){
-    windFactor = 1 + sin(d)/20;
+    windFactor = 1 + sin(d)/90;
     d += noise(d)/8;
 }
 
 function increment_char(){
     if (char_n < branchings.length) char_n += 1;
-    if (root_n < roots.length) root_n += 1;
+    if (root_n < roots.length)      root_n += 1;
 }
 function resetCharCount(){
     char_n = 0;
@@ -224,7 +246,7 @@ function CircleMask(factor){
 
     // circular contour
     beginContour();
-    for (var theta = TWO_PI; theta > 0; theta -= TWO_PI/50){
+    for (var theta = TWO_PI; theta > 0; theta -= TWO_PI/60){
         vertex(rx*cos(theta) + width/2,
                ry*sin(theta) + height/2);
     }
@@ -272,6 +294,7 @@ function generate(sentence){
 }
 
 
+// convenience application of the `rhizome` function
 function sproutRoots(){
     rhizome(-1, len, root_n, roots,      rootDepthFactor,   rootCol);
 }
@@ -331,7 +354,7 @@ function hyphae(){ // draws the roots portion by reversing the growth direction 
 
 function growthRules(letter, branchLength, depthFactor, gravity){
 
-    var local_wind = gravity > 0 ? windFactor : 1;
+    var local_wind = (gravity > 0) ? windFactor : 1; // roots don't sway
 
 
     strokeWeight(branchWidth);
@@ -343,7 +366,7 @@ function growthRules(letter, branchLength, depthFactor, gravity){
     }
     else if (letter == "+") rotate(angle * local_wind);
     else if (letter == "-") rotate(-angle * local_wind);
-    else if (letter == "G") rotate(-angle + local_wind/GminusRatio);
+    else if (letter == "G") rotate(-angle + Math.sign(angle)*(local_wind/GminusRatio));
     else if (letter == "["){
         push();
         branchWidth /= depthFactor;
@@ -355,6 +378,7 @@ function growthRules(letter, branchLength, depthFactor, gravity){
 }
 
 
+// for debugging
 function toggleRoots(){ drawRoots = !drawRoots; }
 
 
@@ -362,111 +386,130 @@ function toggleRoots(){ drawRoots = !drawRoots; }
 
 
 function mousePressed(){
-    clicks += 1;
-//    print('click '+ clicks);
-    
-    for(var i=0;i<instructions.length;i++){
-      if(clicks == i){
-        intro.remove();
-        intro = createP(instructions[i]).id('body')
-      }else if(clicks == instructions.length){
-        sunlight = true;
-      }
+
+    if (!hasSubmitted && creating){
+        clicks += 1;
+    //    print('click '+ clicks);
+
+        for(var i = 0; i < instructions.length; i++){
+
+            if(clicks == i){
+                intro.remove();
+                intro = createP(instructions[i]).id('body')
+            }
+            else if(clicks == instructions.length){
+                sunlight = true;
+            }
+        }
+
+        if(clicks == instructions.length+1){
+            gatherInput();
+            createElement('br')
+            button = createButton('submit');
+            button.mousePressed(saveText);
+        }
     }
-        
-    if(clicks == instructions.length+1){
-        gatherInput();
-        createElement('br')
-        button = createButton('submit');
-        button.mousePressed(saveText);
-    }
-   
 }
 
 function gatherInput(){
-      var questions = [['Think of a specific memory in a forest. <br> What do you remember about the trees?<br>Write about that memory.',"What was the weather?\nWhat color was the light?\nWho was there?\nWhat did you smell?\nWhat were you doing?"],['Rewrite this story from the point of view of a tree.','What do you think think the tree remembers about you?\nHow does the tree remember?']];
-      intro.remove();
-      for(var i = 0; i<questions.length;i++){
-      intro = createP(questions[i][0]).id('instructions');
-      seedTxt[i] = createElement('textarea',questions[i][1], ).id('corpora');
-      seedTxt[i].mousePressed(cleartxt);
-      }
+    var questions = [
+                        ['Think of a specific memory in a forest.'   +
+                         '\nWhat do you remember about the trees?'   +
+                         '\nWrite about that memory.',
+                         'What was the weather?'            +
+                         '\nWhat color was the light?'      +
+                         '\nWho was there?'                 +
+                         '\nWhat did you smell?'            +
+                         '\nWhat were you doing?'
+                         ],
+                        ['Rewrite this story from the point of view of a tree.',
+                         'What do you think think the tree remembers about you?' +
+                         '\nHow does the tree remember?'
+                          ]
+                    ];
+    intro.remove();
+    for(var i = 0; i < questions.length;i++){
+        intro = createP(questions[i][0]).id('instructions');
+        seedTxt[i] = createElement('textarea',questions[i][1], ).id('corpora');
+        seedTxt[i].mousePressed(cleartxt);
+    }
 }
 function cleartxt(){
-    for(var i = 0; i<seedTxt.length; i++){
-    seedTxt[i].html('');
+    for(var i = 0; i < seedTxt.length; i++){
+        seedTxt[i].html('');
     }
 }
 
 function saveText(){
 
-    for(var i = 0; i<seedTxt.length; i++){
-      seed = seed.concat(seedTxt[i].value(),' ');
-      print(seed);
-      seedTxt[i].remove();
+    for(var i = 0; i < seedTxt.length; i++){
+        seed = seed.concat(seedTxt[i].value(), ' ');
+        print(seed);
+        seedTxt[i].remove();
     }
-      intro.remove();
-      removeElements();
-      patterning();
-     forestStory(seed);
-     wander();
+
+    intro.remove();
+    removeElements();
+    forestStory(seed);  // this creates the tree from "seed"
+    patterning();
+
+    wander();
 }
-    
+
 function loadFirebase() {
-  var ref = database.ref("patterns");
+    var ref = database.ref("patterns");
     //ping when there is new data.
-  ref.on("value", gotData, errData);
+    ref.on("value", gotData, errData);
 }
 
 // The data comes back as an object
 var keys, lSystem;
 function gotData(data) {
-  lSystem = data.val();
-  keys = Object.keys(lSystem);
-  console.log(lSystem);
- 
-  
-  console.log(keys);
-    
-  console.log(data);    
+
+    lSystem = data.val();
+    keys = Object.keys(lSystem);
+
+    console.log(lSystem);
+    console.log(keys);
+    console.log(data);
 }
 
 // sends data to firebase
 function patterning() {
     var trees = database.ref('patterns');
-    
+
     var pattern = {
         // don't change these parameters without letting AO know, the firebase server will need some security rules changed
-        tree: branchings, 
-        human: seed, 
-        seed:random(60),
-        fork1:random(8,17),
+        // TA: what is this exactly? Are these what the variables are called on the server side? Can't we name them the same thing for simplicity?
+        tree:   branchings,
+        human:  seed,
+        seed:   random(60),
+        fork1:  random(8, 17),
 //        fork2:random(pattern.fork1-1,patern.fork1+3,),
-        length:random(height/random(8,14))
+        length: random(height/random(8, 14))
     }
-    
+
     var tree = trees.push(pattern, finished);
     console.log("imagined tree" + tree.key);
-    
+}
 
 ////////////////////
 //helpers
 
 // error hanlding
- 
+
 function finished(err) {
     if (err) {
-      console.log("ooops, something went wrong.");
-      console.log(err);
+        console.log("ooops, something went wrong.");
+        console.log(err);
     } else {
-      console.log('tree is in the preserve.');
+        console.log('tree is in the preserve.');
     }
-  }
 }
-       
+
 function errData(error) {
-  console.log("Something went wrong.");
-  console.log(error);
+    console.log("Something went wrong.");
+    console.log(error);
 }
 
 

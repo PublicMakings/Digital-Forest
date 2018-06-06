@@ -102,14 +102,14 @@ function charValuesRules(words){
 // CLEANUP FUNCTIONS:
 
 // order of operations:
-// close brackets |> remove excess rotations <|commutative|> remove repeat rotations |> remove empty brackets
+// close brackets |> remove excess rotations <|> remove repeat rotations |> remove empty brackets
 
 function countOpenBrackets(string){
 
     var left = 0, right = 0;
     var letter;
 
-    for (var n = 0; n < string.length; n++){
+    for (let n = 0; n < string.length; n++){
         letter = string.charAt(n);
 
         if (letter == "[") left += 1;
@@ -119,6 +119,36 @@ function countOpenBrackets(string){
     return (left - right);
 }
 
+// fix bracket hygiene. self explanatory.
+function removeUnpairedBrackets(string){
+
+    var letter;
+    var left = [], right = [];
+
+    for (let n = string.length - 1; n >= 0; n--){
+
+        letter = string.charAt(n);
+
+        if      (letter == "[") left.push(n);
+        else if (letter == "]") right.push(n);
+
+        if (left.length > right.length){
+            string = deleteChar(string,  left.pop());
+        }
+    }
+
+    var dif = right.length - left.length;
+
+    for (var n = 0; n < dif; n++){ // effectively works as an if condition for right > left
+        string = deleteChar(string, right.pop());
+        right = right.map( i => i-1 );
+
+    }
+
+    return string;
+}
+
+// no longer used (removeUnpairedBrackets is instead)
 function closeOpenBrackets(string){
 
     var openBrackets = countOpenBrackets(string);
@@ -133,7 +163,8 @@ function closeOpenBrackets(string){
     return string;
 }
 
-function removeEmptyBrackets(string){ // performs: `[]F -> F` and `[[F]] -> F`
+// performs: `[]F -> F` and `[[F]] -> F`, etc.
+function removeEmptyBrackets(string){
 
     var closeSide = [];
     var content = []
@@ -166,7 +197,8 @@ function removeEmptyBrackets(string){ // performs: `[]F -> F` and `[[F]] -> F`
     return string;
 }
 
-function removeRepeatRotation(string){ // function to convert things like `+-+-+-+F` into `+F`
+ // converts things like `+-+-+-+F` into `+F`
+function removeRepeatRotation(string){
 
     var plus = [];
     var minus = [];
@@ -182,14 +214,13 @@ function removeRepeatRotation(string){ // function to convert things like `+-+-+
         if (!isAngleCharacter(letter) || n == 0){    // brackets or Fs reset the count
 
             if (plus.length > 0 && minus.length > 0){
-                            print(plus, minus)
                 // the lower of the two lengths is the number of rotations that cancel out
                 // e.g. plus.length = 3 and minus.length = 2 --> only 2 cancel out
                 var cancels = min(plus.length, minus.length)
 
                 // combine the coordinates of however many (e.g. cancels = 2) pluses and minuses
                 var indices = concat(plus.slice(0, cancels), minus.slice(0, cancels));
-                indices.sort();
+                indices.sort( (a,b) => a-b );
                 indices.reverse(); // now the indices are arranged largest to smallest (important for deletions to occur correctly).
 
                 for (var i = 0; i < indices.length; i++){
@@ -206,6 +237,8 @@ function removeRepeatRotation(string){ // function to convert things like `+-+-+
     return string;
 }
 
+
+// F++- becomes F, since the excess ++- do not affect anything
 function removeExcessRotation(string){
 
     var foundF = false;
@@ -225,7 +258,7 @@ function removeExcessRotation(string){
     return string;
 }
 
-
+// counts rotations and Fs at each bracket level
 function stringAnalysis(string){
 
     // consectives here refers to how many of these characters are encounted up to that point in the string.
@@ -244,15 +277,15 @@ function stringAnalysis(string){
         if (letter == "["){
 
             for (var key in consecutives){
-                temp[key].push(count[key])              // store the current count in the stack
+                temp[key].push(count[key]);
             }
         }
         // store how many consecutives there have been and return to the previous layer's amount.
         else if (letter == "]"){
 
             for (var key in consecutives){
-                consecutives[key].push(count[key]);     // store the final count up to this point
-                count[key] = temp[key].pop();           // return the count to it's previous amount
+                consecutives[key].push(count[key]);
+                count[key] = temp[key].pop();
             }
         }
         // increment the count of whichever one
@@ -288,7 +321,8 @@ function isBracket(letter){
     return false;
 }
 
-// NOTE: 0-based indexing. E,g, `deleteChar("this", 1) --> "tis"`
+// NOTE: 0-based indexing.
+// E,g, `deleteChar("this", 1) == "tis"`
 function deleteChar(string, n){
     return string.slice(0, n) + string.slice(n + 1);
 }
