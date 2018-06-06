@@ -3,13 +3,16 @@ p5.js interactive artwork about narratives of trees.
 
 ## ToDos'
 ### *Coding*
-
-- [ ] add axiom stringto binary background
-- [ ] translucent mask over introductory tree
-- [ ] display text at the bottom
+- [ ] bring buttons into style of site
+- [ ] add permenant buttons at button
+   * a back, which resets clicks during creating
+   * a create for during wandering
+- [x] add axiom stringto binary background
+- [x] translucent mask over introductory tree
+- [x] display text at the bottom
 
 - [ ] sanitize filter
-- [ ] Binary background
+- [x] Binary background
 - [ ] eventually create a token for writing to the database?
 
 - [x] figure out firebase better, [security  rules](https://gist.github.com/codediodeio/6dbce1305b9556c2136492522e2100f6)
@@ -19,11 +22,11 @@ p5.js interactive artwork about narratives of trees.
 
 
 ### *Writing*
-- [ ] make interview questions
+- [x] make interview questions
 - [x] Credits for index
 - [x] Format for Letterpress
 - [x] translate core architecture into opaque poetics
-- [ ] proofread
+- [x] proofread
 
 
 
