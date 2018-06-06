@@ -20,7 +20,7 @@ function forestStory(txt){
 
 //    txt = seed;
     caption = createElement('p1',txt).id('caption').parent('captions');
-//
+    labeled = true;
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
 

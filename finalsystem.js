@@ -72,10 +72,10 @@ function setup() {
 
     // set up DOM
     intro = createP('Welcome.').id('body');
-    wanderbutton = createButton('Wander Arboretum');
-    treebutton   = createButton('Create Tree');
-    wanderbutton.mousePressed(toggleWander);
-    treebutton.mousePressed(toggleCreate);
+    wanderbutton = createP('\tWander Arboretum').id('choices');
+    treebutton   = createP('\tCreate Tree').id('choices')
+
+ wanderbutton.mousePressed(toggleWander);    treebutton.mousePressed(toggleCreate);
 
     growthRing();
 
@@ -151,25 +151,27 @@ function growthRing(){
 
 // the two modes
 function toggleWander(){
-
+    
     hasSubmitted = true;
+    intro.remove();
+    wanderbutton.remove();
+    treebutton.remove();
     wander();
 
     displayStoredTree(0); // display the first tree
 
-    wanderbutton.remove();
-    treebutton.remove();
+   
 }
 function toggleCreate(){
 
     creating = true;
-
     wanderbutton.remove();
     treebutton.remove();
 }
 
 //AO bit
 // TA: should this run always or just during the "introduction phase"
+// AO: Always, ?
 function introduction(){
 
     background(255);
@@ -385,21 +387,35 @@ function toggleRoots(){ drawRoots = !drawRoots; }
 //AO sketch
 
 
+
 function mousePressed(){
 
     if (!hasSubmitted && creating){
         clicks += 1;
-    //    print('click '+ clicks);
-
+    
+      
         for(var i = 0; i < instructions.length; i++){
-
+            
             if(clicks == i){
+                
+                
+                
                 intro.remove();
                 intro = createP(instructions[i]).id('body')
+                
+                    
+//// and a next/back set of buttons   
+                
+//                   var back =   createP('back').id('choices');
+//        back.mousePressed(function(){ clicks -= 1;});
+//                
+                
+                
             }
             else if(clicks == instructions.length){
                 sunlight = true;
             }
+       
         }
 
         if(clicks == instructions.length+1){

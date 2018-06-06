@@ -30,14 +30,23 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
     bottom:0px;    
 }
 
+#navigation{    
+    position:fixed;
+    height:33px;
+    bottom:0px;    
+}
+
 
 #nursery{
     position:fixed;
     bottom:0px;
     width:450px;
 }
-#saplings:hover{
-    cursor: hand;
+#choices{
+
+    color:rgba(95, 200, 90,.4);
+    cursor: pointer;
+    margin: 7px;
 }
 
 #saplings{position: relative;
@@ -46,6 +55,7 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
     float: left;
     color:rgba(95, 200, 90,.4);
     bottom: 30px;
+    cursor: pointer;
     
 }
 textarea {

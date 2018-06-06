@@ -6,6 +6,9 @@ function wander(){
 
     //make a bunch of clicables
 
+     wanderbutton = createP('Wander Arboretum').id('choices').parent('navigation').style('display','inline-flex').style('margin','0');
+    treebutton   = createP('Create Tree').id('choices').parent('navigation').style('display','inline-flex').style('margin-left','15px');
+    wanderbutton.mousePressed(toggleWander); treebutton.mousePressed(toggleCreate); 
     createP('').id('nursery').parent('footer');
     for(var i = 0; i<keys.length; i++){
 
@@ -30,12 +33,16 @@ function specimens(evt){
     displayStoredTree(num);
 }
 
+var labeled = false;
+
 function displayStoredTree(num){
 
     branchings = treeStories[num];
     txt = humanStories[num];
     bintext = textToBin(txt);
     setTreeParameters();
-
+    if(labeled){caption.remove();}
+    caption = createElement('p1',txt).id('caption').parent('captions');
     caption.html(humanStories[num]);
+    labeled = true;
 }
