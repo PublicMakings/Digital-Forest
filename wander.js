@@ -1,6 +1,7 @@
 var treeStories = [];
 var humanStories = [];
 var arboretum = [];
+var randSeeds = [];
 
 function wander(){
 
@@ -13,6 +14,7 @@ function wander(){
         var k = keys[i]
         treeStories[i] = lSystem[k].tree;
         humanStories[i] = lSystem[k].human;
+        randSeeds[i] = lSystem[k].seed;
 
         //make some <divs> to call that data
         arboretum[i] = createDiv(i).parent('captions').id('saplings');
@@ -28,11 +30,6 @@ function specimens(evt){
     print(treeStories[num]);
 
     retrieveStoredTree(num);
-
-    if (caption == undefined) caption = createElement('p1', txt).id('caption').parent('captions');
-    else                      caption.html(txt);
-
-
 }
 
 function retrieveStoredTree(num){
@@ -41,6 +38,12 @@ function retrieveStoredTree(num){
     txt = humanStories[num];
     bintext = textToBin(txt);
     setTreeParameters();
+
+    if (caption == undefined) caption = createElement('p1', txt).id('caption').parent('captions');
+    else                      caption.html(txt);
+
+    randomSeed(randSeeds[num]);
+    noiseSeed(randSeeds[num]);
 }
 
 
