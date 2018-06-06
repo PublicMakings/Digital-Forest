@@ -15,12 +15,10 @@ function forestStory(txt){
 
 
     hasSubmitted = true;
+    creating     = false;
 
     var newRule = "";
 
-//    txt = seed;
-    caption = createElement('p1',txt).id('caption').parent('captions');
-//
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
 

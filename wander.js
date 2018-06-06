@@ -6,8 +6,8 @@ function wander(){
 
     //make a bunch of clicables
 
-    createP('').id('nursery').parent('footer');
-    for(var i = 0; i<keys.length; i++){
+    // createP('').id('captions').parent('footer');
+    for(var i = 0; i < keys.length; i++){
 
         //get data
         var k = keys[i]
@@ -15,7 +15,7 @@ function wander(){
         humanStories[i] = lSystem[k].human;
 
         //make some <divs> to call that data
-        arboretum[i] = createDiv(i).parent('nursery').id('saplings');
+        arboretum[i] = createDiv(i).parent('captions').id('saplings');
 
         //this is supposed to call the old tree files
         arboretum[i].mouseClicked(specimens);
@@ -27,17 +27,20 @@ function specimens(evt){
     const num = +evt.target.textContent;
     print(treeStories[num]);
 
-    displayStoredTree(num);
+    retrieveStoredTree(num);
+
+    if (caption == undefined) caption = createElement('p1', txt).id('caption').parent('captions');
+    else                      caption.html(txt);
+
+
 }
 
-function displayStoredTree(num){
+function retrieveStoredTree(num){
 
-    branchings = treeStories[num];
+    branchings = treeStories[num]; // would be better if what we retrieved was the rule, and we recreated the Lsystem
     txt = humanStories[num];
     bintext = textToBin(txt);
     setTreeParameters();
-
-    caption.html(humanStories[num]);
 }
 
 
@@ -75,14 +78,14 @@ function cleartxt(){
 function saveText(){
 
     for(var i = 0; i < seedTxt.length; i++){
-        seed = seed.concat(seedTxt[i].value(), ' ');
-        print(seed);
+        response = response.concat(seedTxt[i].value(), ' ');
+        print(response);
         seedTxt[i].remove();
     }
 
     intro.remove();
     removeElements();
-    forestStory(seed);  // this creates the tree from "seed"
+    forestStory(response);  // this creates the tree from "seed"
     patterning();
 
     wander();
@@ -96,7 +99,7 @@ function patterning() {
     var pattern = {
         // don't change these parameters without letting AO know, the firebase server will need some security rules changed
         tree:   branchings,
-        human:  seed,
+        human:  response,
         seed:   random(60),
         fork1:  random(8, 17),
 //        fork2:random(pattern.fork1-1,patern.fork1+3,),

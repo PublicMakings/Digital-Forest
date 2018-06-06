@@ -1,11 +1,24 @@
 //Based on the L-System implementation by Daniel Shiffman
 
 //AO Global variables
+var instructions = ['Welcome.',
+
+                    'This Arboretum is a reflection about how we, as humans, tell stories about our relationship to trees.'
+                     + ' How we think of them and how they think of us.'
+                     + '\n The series of questions asked are intended to evoke memories of encountering trees. '
+                     + 'This site gathers these narratives into a digital repository propogated with a series of digital trees and text.',
+
+                    'From the text you submit a seed of a digital tree is formulated. '
+                     + 'The seed grows through a process of chance operations and a Lindenmayer system, a type of formal grammar which acts a mechanism for translating lists of characters into geometric structures.'
+                     + '\n L-systems were developed by Aristid Lindenmayer, a theoretical biologist and botanist. '
+                     + 'Lindenmayer used L-systems to describe the behaviour of plant cells and to model the growth processes of plant development.',
+
+                    'Think about times you have been in forests.'];
 var intro;
-var instructions = ['Welcome.','This Arboretum is a reflection about how we, as humans, tell stories about our relationship to  trees. how we think of them and how they think of us.\n The series of questions asked are intended to evoke memories of encountering trees. This site gathers these narratives into a digital repository propogated with a series of digital trees and text.','From the text you submit a seed of a digital tree is formulated. The seed grows through a process of chance operations and a Lindenmayer system, a type of formal grammar which acts a mechanism for translating lists of characters into geometric structures.\n L-systems were developed by Aristid Lindenmayer, a theoretical biologist and botanist. Lindenmayer used L-systems to describe the behaviour of plant cells and to model the growth processes of plant development.', 'Think about times you have been in forests.'];
+
 // Get input from user
 var seedTxt = [];
-var seed = '';
+var response = '';
 var button;
 
 // Keep list of DOM elements for clearing later when reloading
@@ -16,7 +29,6 @@ var creating = false;
 
 var sunlight = false;
 
-// add `wander arboretrum` and `create tree` button
 // F string background
 // if condition on submission
 // organize all globals to live up here, or preferably them up into groups and make singleton classes for them
@@ -100,7 +112,7 @@ function draw(){
 
         fill(220, 220, 200, 90);
         stroke(220, 220, 200, 90);
-        text(branchings, 0, 0, width, height);
+        text(branchings, 100, 100, 300, 300); // text won't wrap without spaces.
 
 
         /////// mask the text
@@ -155,10 +167,12 @@ function toggleWander(){
     hasSubmitted = true;
     wander();
 
-    displayStoredTree(0); // display the first tree
+    retrieveStoredTree(0); // display the first tree
 
     wanderbutton.remove();
     treebutton.remove();
+
+    intro.remove();
 }
 function toggleCreate(){
 
