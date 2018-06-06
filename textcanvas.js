@@ -55,18 +55,6 @@ function forestStory(txt){
 }
 
 
-function cleanUp(string){
-
-    string = removeUnpairedBrackets(string);
-    string = removeRepeatRotation(string);
-    string = removeExcessRotation(string);
-    string = removeEmptyBrackets(string);
-
-    return string;
-}
-
-
-
 function textToBin(text) {
   var length = text.length,
       output = [];
@@ -128,14 +116,4 @@ function deepestLevel(string){
 }
 
 
-if (false){
-
-    div = []
-    s = stringAnalysis(branchings)
-    for (var i = 0; i < s["+"].length; i++){
-
-        div.push(s["+"][i] - s["-"][i]);
-    }
-
-}
 

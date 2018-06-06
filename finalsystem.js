@@ -411,50 +411,7 @@ function mousePressed(){
     }
 }
 
-function gatherInput(){
-    var questions = [
-                        ['Think of a specific memory in a forest.'   +
-                         '\nWhat do you remember about the trees?'   +
-                         '\nWrite about that memory.',
-                         'What was the weather?'            +
-                         '\nWhat color was the light?'      +
-                         '\nWho was there?'                 +
-                         '\nWhat did you smell?'            +
-                         '\nWhat were you doing?'
-                         ],
-                        ['Rewrite this story from the point of view of a tree.',
-                         'What do you think think the tree remembers about you?' +
-                         '\nHow does the tree remember?'
-                          ]
-                    ];
-    intro.remove();
-    for(var i = 0; i < questions.length;i++){
-        intro = createP(questions[i][0]).id('instructions');
-        seedTxt[i] = createElement('textarea',questions[i][1], ).id('corpora');
-        seedTxt[i].mousePressed(cleartxt);
-    }
-}
-function cleartxt(){
-    for(var i = 0; i < seedTxt.length; i++){
-        seedTxt[i].html('');
-    }
-}
 
-function saveText(){
-
-    for(var i = 0; i < seedTxt.length; i++){
-        seed = seed.concat(seedTxt[i].value(), ' ');
-        print(seed);
-        seedTxt[i].remove();
-    }
-
-    intro.remove();
-    removeElements();
-    forestStory(seed);  // this creates the tree from "seed"
-    patterning();
-
-    wander();
-}
 
 function loadFirebase() {
     var ref = database.ref("patterns");
@@ -474,31 +431,12 @@ function gotData(data) {
     console.log(data);
 }
 
-// sends data to firebase
-function patterning() {
-    var trees = database.ref('patterns');
-
-    var pattern = {
-        // don't change these parameters without letting AO know, the firebase server will need some security rules changed
-        // TA: what is this exactly? Are these what the variables are called on the server side? Can't we name them the same thing for simplicity?
-        tree:   branchings,
-        human:  seed,
-        seed:   random(60),
-        fork1:  random(8, 17),
-//        fork2:random(pattern.fork1-1,patern.fork1+3,),
-        length: random(height/random(8, 14))
-    }
-
-    var tree = trees.push(pattern, finished);
-    console.log("imagined tree" + tree.key);
-}
-
 ////////////////////
 //helpers
 
 // error hanlding
 
-function finished(err) {
+function finished(err) { // used in wander.js
     if (err) {
         console.log("ooops, something went wrong.");
         console.log(err);
