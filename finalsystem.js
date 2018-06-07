@@ -112,7 +112,7 @@ function draw(){
 
         fill(220, 220, 200, 90);
         stroke(220, 220, 200, 90);
-        text(branchings, 100, 100, 300, 300); // text won't wrap without spaces.
+        text(branchings, 0, 0, width, height); // text won't wrap without spaces.
 
 
         /////// mask the text

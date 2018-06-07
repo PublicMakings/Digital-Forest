@@ -51,18 +51,19 @@ function retrieveStoredTree(num){
 
 function gatherInput(){
     var questions = [
-                        ['Think of a specific memory in a forest.'   +
-                         '\nWhat do you remember about the trees?'   +
-                         '\nWrite about that memory.',
-                         'What was the weather?'            +
-                         '\nWhat color was the light?'      +
-                         '\nWho was there?'                 +
-                         '\nWhat did you smell?'            +
-                         '\nWhat were you doing?'
+                        ['Think of a specific memory in a forest.'
+                          + '\nWhat do you remember about the trees?'
+                          + '\nWrite about that memory.',
+                         'What was the weather?'
+                          + '\nWhat color was the light?'
+                          + '\nWho was there?'
+                          + '\nWhat did you smell?'
+                          + '\nWhat were you doing?'
                          ],
+
                         ['Rewrite this story from the point of view of a tree.',
-                         'What do you think think the tree remembers about you?' +
-                         '\nHow does the tree remember?'
+                         'What do you think think the tree remembers about you?'
+                          + '\nHow does the tree remember?'
                           ]
                     ];
     intro.remove();
@@ -88,7 +89,7 @@ function saveText(){
 
     intro.remove();
     removeElements();
-    forestStory(response);  // this creates the tree from "seed"
+    forestStory(response);  // this creates the tree from the user text reponse
     patterning();
 
     wander();

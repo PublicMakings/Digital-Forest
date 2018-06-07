@@ -38,6 +38,7 @@ function forestStory(txt){
     // protection and sanitization goes here:
     newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
     //
+    newRule = addSpaces(newRule);
 
     // rules[0].b = newRule;
     rules[0].b = newRule;
@@ -64,6 +65,23 @@ function textToBin(text) {
   return output.join(" ");
 }
 
+
+// add spaces around brackets to allow text wrapping for the background
+function addSpaces(text){
+
+    var letter;
+    var string = "";
+    for (var n = 0; n < text.length; n++){
+        letter = text.charAt(n);
+
+        if (letter == "[") letter = " " + letter;
+        if (letter == "]") letter = letter + " ";
+
+        string += letter;
+    }
+
+    return string;
+}
 
 
 //= ideally, this function will set all the parameters necessary to draw the tree correctly including:
