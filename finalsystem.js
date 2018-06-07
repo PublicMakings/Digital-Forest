@@ -177,16 +177,23 @@ function toggleWander(){
 
     wander();
     retrieveStoredTree(0); // display the first tree
+
+    wanderbutton.parent('navigation');
+    treebutton.parent('navigation');
 }
 function toggleCreate(){
 
     hasSubmitted = false;
     creating = true;
+    clicks = 0
 
-    global back = createP('back').id('choices');
-    back.mousePressed(() => clicks -= 1 );
-    // wanderbutton.remove();
-    // treebutton.remove();
+    back = createP('back').id('choices')
+                          .style('display','inline-flex')
+                          .style('margin','0');
+    back.mousePressed(() => clicks -= 2 );
+
+    wanderbutton.parent('navigation');
+    treebutton.parent('navigation');
 }
 
 //AO bit

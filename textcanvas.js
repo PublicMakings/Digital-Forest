@@ -3,6 +3,7 @@
 
 var textField;
 var submit, wanderbutton, treebutton;
+var back;
 var txt, bintext;
 
 var hasSubmitted = false;

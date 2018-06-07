@@ -5,11 +5,6 @@ var randSeeds = [];
 
 function wander(){
 
-    // move the wander buttons to the bottom of the page by recreating them (is there a better way to do this?)
-
-    wanderbutton.parent('navigation');
-    treebutton.parent('navigation');
-
     //make a bunch of clicables for the trees stored in the databse
     createP('').id('nursery').parent('footer');
     for(var i = 0; i<keys.length; i++){
