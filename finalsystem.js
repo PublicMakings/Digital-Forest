@@ -29,9 +29,10 @@ var creating = false;
 
 var sunlight = false;
 
-// F string background
-// if condition on submission
-// organize all globals to live up here, or preferably them up into groups and make singleton classes for them
+// F string background -- fix
+// add if condition on submission to disallow empty responses
+// organize all globals to live up here, or preferably bundle them up into groups and make singleton classes for them
+// write sunlight shader.
 
 // TREE THINGS
 
@@ -84,8 +85,13 @@ function setup() {
 
     // set up DOM
     intro = createP('Welcome.').id('body');
-    wanderbutton = createButton('Wander Arboretum');
-    treebutton   = createButton('Create Tree');
+    wanderbutton = createP('Wander Arboretum').id('choices')
+                                              .style('display','inline-flex')
+                                              .style('margin','0');
+    treebutton   = createP('\tCreate Tree').id('choices')
+                                           .style('display','inline-flex')
+                                           .style('margin-left','15px');
+
     wanderbutton.mousePressed(toggleWander);
     treebutton.mousePressed(toggleCreate);
 
@@ -98,9 +104,9 @@ function draw(){
     clearCanvas();
     resetMatrix();
 
-    // introduction();
+    introduction();
 
-    // if the user has submitted, draw their tree and their binary/string background
+    // if the user has submitted, draw their binary/string background
     if (hasSubmitted) {
 
         textFont('Georgia', 15);
@@ -112,7 +118,7 @@ function draw(){
 
         fill(220, 220, 200, 90);
         stroke(220, 220, 200, 90);
-        text(branchings, 0, 0, width, height); // text won't wrap without spaces.
+        text(branchings, -1000, -1000, width+1000, height+1000); // text won't wrap without spaces.
 
 
         /////// mask the text
@@ -165,25 +171,27 @@ function growthRing(){
 function toggleWander(){
 
     hasSubmitted = true;
-    wander();
-
-    retrieveStoredTree(0); // display the first tree
-
-    wanderbutton.remove();
-    treebutton.remove();
-
     intro.remove();
+    // wanderbutton.remove();
+    // treebutton.remove();
+
+    wander();
+    retrieveStoredTree(0); // display the first tree
 }
 function toggleCreate(){
 
+    hasSubmitted = false;
     creating = true;
 
-    wanderbutton.remove();
-    treebutton.remove();
+    global back = createP('back').id('choices');
+    back.mousePressed(() => clicks -= 1 );
+    // wanderbutton.remove();
+    // treebutton.remove();
 }
 
 //AO bit
 // TA: should this run always or just during the "introduction phase"
+// AO: Always, ?
 function introduction(){
 
     background(255);
@@ -399,11 +407,11 @@ function toggleRoots(){ drawRoots = !drawRoots; }
 //AO sketch
 
 
+
 function mousePressed(){
 
     if (!hasSubmitted && creating){
         clicks += 1;
-    //    print('click '+ clicks);
 
         for(var i = 0; i < instructions.length; i++){
 
@@ -414,6 +422,7 @@ function mousePressed(){
             else if(clicks == instructions.length){
                 sunlight = true;
             }
+
         }
 
         if(clicks == instructions.length+1){

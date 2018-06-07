@@ -19,6 +19,9 @@ function forestStory(txt){
 
     var newRule = "";
 
+    caption = createElement('p1',txt).id('caption').parent('captions');
+    labeled = true;
+
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
 

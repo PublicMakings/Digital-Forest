@@ -5,16 +5,20 @@ var randSeeds = [];
 
 function wander(){
 
-    //make a bunch of clicables
+    // move the wander buttons to the bottom of the page by recreating them (is there a better way to do this?)
 
-    // createP('').id('captions').parent('footer');
-    for(var i = 0; i < keys.length; i++){
+    wanderbutton.parent('navigation');
+    treebutton.parent('navigation');
+
+    //make a bunch of clicables for the trees stored in the databse
+    createP('').id('nursery').parent('footer');
+    for(var i = 0; i<keys.length; i++){
 
         //get data
         var k = keys[i]
-        treeStories[i] = lSystem[k].tree;
+        treeStories[i]  = lSystem[k].tree;
         humanStories[i] = lSystem[k].human;
-        randSeeds[i] = lSystem[k].seed;
+        randSeeds[i]    = lSystem[k].seed;
 
         //make some <divs> to call that data
         arboretum[i] = createDiv(i).parent('captions').id('saplings');
@@ -32,6 +36,9 @@ function specimens(evt){
     retrieveStoredTree(num);
 }
 
+
+var labeled = false;    // aren't all trees labeled? TODO: figure out why this is here
+
 function retrieveStoredTree(num){
 
     branchings = treeStories[num]; // would be better if what we retrieved was the rule, and we recreated the Lsystem
@@ -39,11 +46,14 @@ function retrieveStoredTree(num){
     bintext = textToBin(txt);
     setTreeParameters();
 
-    if (caption == undefined) caption = createElement('p1', txt).id('caption').parent('captions');
-    else                      caption.html(txt);
-
+    // it's ok to set these both as the same seed, since they affect vastly different things
     randomSeed(randSeeds[num]);
     noiseSeed(randSeeds[num]);
+
+    if(labeled){caption.remove();}  // aren't all trees captioned?
+    caption = createElement('p1',txt).id('caption').parent('captions');
+    caption.html(humanStories[num]);
+    labeled = true;
 }
 
 
@@ -59,17 +69,17 @@ function gatherInput(){
                           + '\nWho was there?'
                           + '\nWhat did you smell?'
                           + '\nWhat were you doing?'
-                         ],
+                        ],
 
                         ['Rewrite this story from the point of view of a tree.',
                          'What do you think think the tree remembers about you?'
                           + '\nHow does the tree remember?'
-                          ]
+                        ]
                     ];
     intro.remove();
     for(var i = 0; i < questions.length;i++){
         intro = createP(questions[i][0]).id('instructions');
-        seedTxt[i] = createElement('textarea',questions[i][1], ).id('corpora');
+        seedTxt[i] = createElement('textarea', questions[i][1]).id('corpora');
         seedTxt[i].mousePressed(cleartxt);
     }
 }
