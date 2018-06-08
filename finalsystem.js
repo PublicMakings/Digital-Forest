@@ -1,11 +1,24 @@
 //Based on the L-System implementation by Daniel Shiffman
 
 //AO Global variables
+var instructions = ['Welcome.',
+
+                    'This Arboretum is a reflection about how we, as humans, tell stories about our relationship to trees.'
+                     + ' How we think of them and how they think of us.'
+                     + '\n The series of questions asked are intended to evoke memories of encountering trees. '
+                     + 'This site gathers these narratives into a digital repository propogated with a series of digital trees and text.',
+
+                    'From the text you submit a seed of a digital tree is formulated. '
+                     + 'The seed grows through a process of chance operations and a Lindenmayer system, a type of formal grammar which acts a mechanism for translating lists of characters into geometric structures.'
+                     + '\n L-systems were developed by Aristid Lindenmayer, a theoretical biologist and botanist. '
+                     + 'Lindenmayer used L-systems to describe the behaviour of plant cells and to model the growth processes of plant development.',
+
+                    'Think about times you have been in forests.'];
 var intro;
-var instructions = ['Welcome.','This Arboretum is a reflection about how we, as humans, tell stories about our relationship to  trees. how we think of them and how they think of us.\n The series of questions asked are intended to evoke memories of encountering trees. This site gathers these narratives into a digital repository propogated with a series of digital trees and text.','From the text you submit a seed of a digital tree is formulated. The seed grows through a process of chance operations and a Lindenmayer system, a type of formal grammar which acts a mechanism for translating lists of characters into geometric structures.\n L-systems were developed by Aristid Lindenmayer, a theoretical biologist and botanist. Lindenmayer used L-systems to describe the behaviour of plant cells and to model the growth processes of plant development.', 'Think about times you have been in forests.'];
+
 // Get input from user
 var seedTxt = [];
-var seed = '';
+var response = '';
 var button;
 
 // Keep list of DOM elements for clearing later when reloading
@@ -16,10 +29,10 @@ var creating = false;
 
 var sunlight = false;
 
-// add `wander arboretrum` and `create tree` button
-// F string background
-// if condition on submission
-// organize all globals to live up here, or preferably them up into groups and make singleton classes for them
+// F string background -- fix
+// add if condition on submission to disallow empty responses
+// organize all globals to live up here, or preferably bundle them up into groups and make singleton classes for them
+// write sunlight shader.
 
 // TREE THINGS
 
@@ -72,10 +85,15 @@ function setup() {
 
     // set up DOM
     intro = createP('Welcome.').id('body');
-    wanderbutton = createP('\tWander Arboretum').id('choices');
+    wanderbutton = createP('Wander Arboretum').id('choices')
+                                              .style('display','inline-flex')
+                                              .style('margin','0');
     treebutton   = createP('\tCreate Tree').id('choices')
+                                           .style('display','inline-flex')
+                                           .style('margin-left','15px');
 
- wanderbutton.mousePressed(toggleWander);    treebutton.mousePressed(toggleCreate);
+    wanderbutton.mousePressed(toggleWander);
+    treebutton.mousePressed(toggleCreate);
 
     growthRing();
 
@@ -86,9 +104,9 @@ function draw(){
     clearCanvas();
     resetMatrix();
 
-    // introduction();
+    introduction();
 
-    // if the user has submitted, draw their tree and their binary/string background
+    // if the user has submitted, draw their binary/string background
     if (hasSubmitted) {
 
         textFont('Georgia', 15);
@@ -100,7 +118,7 @@ function draw(){
 
         fill(220, 220, 200, 90);
         stroke(220, 220, 200, 90);
-        text(branchings, 0, 0, width, height);
+        text(branchings, -1000, -1000, width+1000, height+1000); // text won't wrap without spaces.
 
 
         /////// mask the text
@@ -151,22 +169,31 @@ function growthRing(){
 
 // the two modes
 function toggleWander(){
-    
+
     hasSubmitted = true;
     intro.remove();
-    wanderbutton.remove();
-    treebutton.remove();
+    // wanderbutton.remove();
+    // treebutton.remove();
+
     wander();
+    retrieveStoredTree(0); // display the first tree
 
-    displayStoredTree(0); // display the first tree
-
-   
+    wanderbutton.parent('navigation');
+    treebutton.parent('navigation');
 }
 function toggleCreate(){
 
+    hasSubmitted = false;
     creating = true;
-    wanderbutton.remove();
-    treebutton.remove();
+    clicks = 0
+
+    back = createP('back').id('choices')
+                          .style('display','inline-flex')
+                          .style('margin','0');
+    back.mousePressed(() => clicks -= 2 );
+
+    wanderbutton.parent('navigation');
+    treebutton.parent('navigation');
 }
 
 //AO bit
@@ -392,30 +419,17 @@ function mousePressed(){
 
     if (!hasSubmitted && creating){
         clicks += 1;
-    
-      
+
         for(var i = 0; i < instructions.length; i++){
-            
+
             if(clicks == i){
-                
-                
-                
                 intro.remove();
                 intro = createP(instructions[i]).id('body')
-                
-                    
-//// and a next/back set of buttons   
-                
-//                   var back =   createP('back').id('choices');
-//        back.mousePressed(function(){ clicks -= 1;});
-//                
-                
-                
             }
             else if(clicks == instructions.length){
                 sunlight = true;
             }
-       
+
         }
 
         if(clicks == instructions.length+1){
@@ -427,50 +441,7 @@ function mousePressed(){
     }
 }
 
-function gatherInput(){
-    var questions = [
-                        ['Think of a specific memory in a forest.'   +
-                         '\nWhat do you remember about the trees?'   +
-                         '\nWrite about that memory.',
-                         'What was the weather?'            +
-                         '\nWhat color was the light?'      +
-                         '\nWho was there?'                 +
-                         '\nWhat did you smell?'            +
-                         '\nWhat were you doing?'
-                         ],
-                        ['Rewrite this story from the point of view of a tree.',
-                         'What do you think think the tree remembers about you?' +
-                         '\nHow does the tree remember?'
-                          ]
-                    ];
-    intro.remove();
-    for(var i = 0; i < questions.length;i++){
-        intro = createP(questions[i][0]).id('instructions');
-        seedTxt[i] = createElement('textarea',questions[i][1], ).id('corpora');
-        seedTxt[i].mousePressed(cleartxt);
-    }
-}
-function cleartxt(){
-    for(var i = 0; i < seedTxt.length; i++){
-        seedTxt[i].html('');
-    }
-}
 
-function saveText(){
-
-    for(var i = 0; i < seedTxt.length; i++){
-        seed = seed.concat(seedTxt[i].value(), ' ');
-        print(seed);
-        seedTxt[i].remove();
-    }
-
-    intro.remove();
-    removeElements();
-    forestStory(seed);  // this creates the tree from "seed"
-    patterning();
-
-    wander();
-}
 
 function loadFirebase() {
     var ref = database.ref("patterns");
@@ -490,31 +461,12 @@ function gotData(data) {
     console.log(data);
 }
 
-// sends data to firebase
-function patterning() {
-    var trees = database.ref('patterns');
-
-    var pattern = {
-        // don't change these parameters without letting AO know, the firebase server will need some security rules changed
-        // TA: what is this exactly? Are these what the variables are called on the server side? Can't we name them the same thing for simplicity?
-        tree:   branchings,
-        human:  seed,
-        seed:   random(60),
-        fork1:  random(8, 17),
-//        fork2:random(pattern.fork1-1,patern.fork1+3,),
-        length: random(height/random(8, 14))
-    }
-
-    var tree = trees.push(pattern, finished);
-    console.log("imagined tree" + tree.key);
-}
-
 ////////////////////
 //helpers
 
 // error hanlding
 
-function finished(err) {
+function finished(err) { // used in wander.js
     if (err) {
         console.log("ooops, something went wrong.");
         console.log(err);

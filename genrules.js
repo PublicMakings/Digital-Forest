@@ -99,6 +99,16 @@ function charValuesRules(words){
 
 
 
+function cleanUp(string){
+
+    string = removeUnpairedBrackets(string);
+    string = removeRepeatRotation(string);
+    string = removeExcessRotation(string);
+    string = removeEmptyBrackets(string);
+
+    return string;
+}
+
 // CLEANUP FUNCTIONS:
 
 // order of operations:
@@ -262,7 +272,7 @@ function removeExcessRotation(string){
 function stringAnalysis(string){
 
     // consectives here refers to how many of these characters are encounted up to that point in the string.
-    // only close brackets reverse the count
+    // only close brackets revert the count
 
     var consecutives = {"F": [],    "+": [],    "-": []}
     var count        = {"F": 0,     "+": 0,     "-": 0}

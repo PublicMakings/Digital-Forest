@@ -1,8 +1,8 @@
 body {font-family: 'Merriweather', serif;
       font-size: 18px;
-      padding: 0; margin:40px;} 
+      padding: 0; margin:40px;}
 
-Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: relative; Z-index: 2; } 
+Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: relative; Z-index: 2; }
 
 #intro{font-size: 12;
         position: fixed;
@@ -15,25 +15,25 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
         Z-index: 3;
         color:rgba(70,160,120,.5)
         }
-#captions{font-size: 16px !important;  
+#captions{font-size: 16px !important;
     max-width:460px;
         top:470px;
-    
+
         position: relative;
 /*        Z-index: 3;*/
         color:rgb(100,160,110);
         }
 
-#footer{    
+#footer{
     position:fixed;
     height:50px;
-    bottom:0px;    
+    bottom:0px;
 }
 
-#navigation{    
+#navigation{
     position:fixed;
     height:33px;
-    bottom:0px;    
+    bottom:0px;
 }
 
 
@@ -44,19 +44,23 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
 }
 #choices{
 
-    color:rgba(95, 200, 90,.4);
+    color:rgba(95, 180, 90,.5);
     cursor: pointer;
     margin: 7px;
+    border-style: solid;
+    border-color: lightgrey;
+    border-width: 2px;
 }
 
-#saplings{position: relative;
+#saplings{
+    position: relative;
     display: inline-flex;
     width: 25px;
     float: left;
     color:rgba(95, 200, 90,.4);
     bottom: 30px;
     cursor: pointer;
-    
+
 }
 textarea {
   width: 400px;
@@ -73,7 +77,7 @@ p1{font-size:16;
 
 }
 p2{font-size: 12;}
- 
+
 A{text-decoration:none; color:rgb(0,160,150)}
 h1{color:rgb(70,160,120,10);Z-index: 2;line-height:10px;}
 h3{color:rgb(90,160,120);Z-index: 2;line-height:10px;}
