@@ -13,7 +13,8 @@ var instructions = ['Welcome.',
                      + '\n L-systems were developed by Aristid Lindenmayer, a theoretical biologist and botanist. '
                      + 'Lindenmayer used L-systems to describe the behaviour of plant cells and to model the growth processes of plant development.',
 
-                    'Think about times you have been in forests.'];
+                    'Think about times you have been in forests.'
+                    ];
 var intro;
 
 // Get input from user
@@ -111,14 +112,14 @@ function draw(){
 
         textFont('Georgia', 15);
         strokeWeight(.5);
-        fill(220, 220, 240, 90);
-        stroke(220, 220, 240, 90);
+        fill(220, 220, 240, 110);
+        stroke(220, 220, 240, 110);
         textAlign(CENTER, CENTER);
         text(bintext, 0, 0, width, height);
 
-        fill(220, 220, 200, 90);
-        stroke(220, 220, 200, 90);
-        text(branchings, -1000, -1000, width+1000, height+1000); // text won't wrap without spaces.
+        fill(220, 220, 200, 110);
+        stroke(220, 220, 200, 110);
+        text(branchings.substr(0, 1600), 0, 0, width, height);
 
 
         /////// mask the text

@@ -73,16 +73,21 @@ function textToBin(text) {
 // add spaces around brackets to allow text wrapping for the background
 function addSpaces(text){
 
-    var letter;
+    var letter, next;
     var string = "";
-    for (var n = 0; n < text.length; n++){
-        letter = text.charAt(n);
 
-        if (letter == "[") letter = " " + letter;
-        if (letter == "]") letter = letter + " ";
+    for (var n = 0; n < text.length - 1; n++){
+
+        letter = text.charAt(n);
+        next = text.charAt(n + 1);
+
+        if (letter == "[" && !isBracket(next)) letter = " " + letter;
+        if (letter == "]" && !isBracket(next)) letter = letter + " ";
 
         string += letter;
     }
+
+    string += text[text.length];
 
     return string;
 }
