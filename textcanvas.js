@@ -18,7 +18,7 @@ function forestStory(txt){
     hasSubmitted = true;
     creating     = false;
 
-    var newRule = "";
+
 
     caption = createElement('p1',txt).id('caption').parent('captions');
     labeled = true;
@@ -26,35 +26,42 @@ function forestStory(txt){
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
 
-    // componenets:
-    // - semantic rules
-    // - Math option creating key value pairs with numbers and then proposing a math operand...
-    // - character conversion
-    // - word count based rules
+    var newRule = textToRule(words);
 
-    // at the moment, each of the items produces what is essentially an independent rule and then we tack all those rules together.
-    // instead, consider a system where each of these layers are convolutions to an input rule
-    newRule += wordCountRules(words);
-    newRule += semanticRules(words);
-    newRule += charCountRules(words);
-    newRule += charValuesRules(words);
-
-    // protection and sanitization goes here:
-    newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
-    //
-    newRule = addSpaces(newRule);
-
-    // rules[0].b = newRule;
     rules[0].b = newRule;
 
     resetLSystems();
     setTreeParameters();
 
     print(textToBin(txt));
-//
     print("new rule: F -> ", newRule);
     print(branchings);
     print(txt);
+}
+
+
+function textToRule(words){
+
+    var newRule = "";
+
+    newRule += wordCountRules(words);
+    newRule += semanticRules(words);
+    newRule += charCountRules(words);
+    newRule += charValuesRules(words);
+
+    var L = allowedCharLength(words);
+    var n = round(random(1, 5));
+    while (newRule.length > L){
+
+        [newRule, n] = hoppingTruncate(newRule, n);
+
+        if (n == 0) n = round(random(1, 5));
+    }
+
+    newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
+    newRule = addSpaces(newRule); // this is just so the strings can print in the background
+
+    return newRule;
 }
 
 
@@ -81,13 +88,16 @@ function addSpaces(text){
         letter = text.charAt(n);
         next = text.charAt(n + 1);
 
-        if (letter == "[" && !isBracket(next)) letter = " " + letter;
-        if (letter == "]" && !isBracket(next)) letter = letter + " ";
+        if  (!isBracket(next)){
+
+            if      (letter == "[") letter = " " + letter;
+            else if (letter == "]") letter += " ";
+        }
 
         string += letter;
     }
 
-    string += text[text.length];
+    string += text[text.length - 1];
 
     return string;
 }
