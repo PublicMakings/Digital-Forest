@@ -50,6 +50,8 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
     border-style: solid;
     border-color: lightgrey;
     border-width: 2px;
+    border-radius: 4px;
+    padding: 4px 4px;
 }
 
 #saplings{

@@ -6,6 +6,7 @@ var randSeeds = [];
 function wander(){
 
     //make a bunch of clicables for the trees stored in the databse
+    createElement('br');
     createP('').id('nursery').parent('footer');
     for(var i = 0; i<keys.length; i++){
 
@@ -54,23 +55,8 @@ function retrieveStoredTree(num){
 
 
 
-function gatherInput(){
-    var questions = [
-                        ['Think of a specific memory in a forest.'
-                          + '\nWhat do you remember about the trees?'
-                          + '\nWrite about that memory.',
-                         'What was the weather?'
-                          + '\nWhat color was the light?'
-                          + '\nWho was there?'
-                          + '\nWhat did you smell?'
-                          + '\nWhat were you doing?'
-                        ],
+function promptQuestions(){
 
-                        ['Rewrite this story from the point of view of a tree.',
-                         'What do you think think the tree remembers about you?'
-                          + '\nHow does the tree remember?'
-                        ]
-                    ];
     intro.remove();
     for(var i = 0; i < questions.length;i++){
         intro = createP(questions[i][0]).id('instructions');
@@ -85,6 +71,24 @@ function cleartxt(){
 }
 
 function saveText(){
+
+    // if the textbox is empty or if it is the same as the prompt question (i.e. hasn't been addressed at all), do nothing
+
+    for(var i = 0; i < seedTxt.length; i++){
+
+        sdtxt = seedTxt[i].value();
+
+        if (sdtxt.length == 0 ||
+            sdtxt == questions[i][1] ||
+            sdtxt == 'please type something')
+        {
+            seedTxt[i].value('please type something');
+
+            return; // do nothing else
+        }
+    }
+
+
 
     for(var i = 0; i < seedTxt.length; i++){
         response = response.concat(seedTxt[i].value(), ' ');
@@ -107,7 +111,7 @@ function patterning() {
 
     var pattern = {
         // don't change these parameters without letting AO know, the firebase server will need some security rules changed
-        tree:   branchings,
+        tree:   textToRule(response),
         human:  response,
         seed:   random(60),
         fork1:  random(8, 17),

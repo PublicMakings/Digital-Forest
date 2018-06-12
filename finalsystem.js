@@ -13,7 +13,25 @@ var instructions = ['Welcome.',
                      + '\n L-systems were developed by Aristid Lindenmayer, a theoretical biologist and botanist. '
                      + 'Lindenmayer used L-systems to describe the behaviour of plant cells and to model the growth processes of plant development.',
 
-                    'Think about times you have been in forests.'];
+                    'Think about times you have been in forests.'
+                    ];
+
+var questions = [
+                    ['Think of a specific memory in a forest.'
+                      + '\nWhat do you remember about the trees?'
+                      + '\nWrite about that memory.',
+                     'What was the weather?'
+                      + '\nWhat color was the light?'
+                      + '\nWho was there?'
+                      + '\nWhat did you smell?'
+                      + '\nWhat were you doing?'
+                    ],
+
+                    ['Rewrite this story from the point of view of a tree.',
+                     'What do you think think the tree remembers about you?'
+                      + '\nHow does the tree remember?'
+                    ]
+                ];
 var intro;
 
 // Get input from user
@@ -111,14 +129,14 @@ function draw(){
 
         textFont('Georgia', 15);
         strokeWeight(.5);
-        fill(220, 220, 240, 90);
-        stroke(220, 220, 240, 90);
+        fill(220, 220, 240, 110);
+        stroke(220, 220, 240, 110);
         textAlign(CENTER, CENTER);
         text(bintext, 0, 0, width, height);
 
-        fill(220, 220, 200, 90);
-        stroke(220, 220, 200, 90);
-        text(branchings, -1000, -1000, width+1000, height+1000); // text won't wrap without spaces.
+        fill(220, 220, 200, 110);
+        stroke(220, 220, 200, 110);
+        text(branchings.substr(0, 1600), 0, -10, width, height);
 
 
         /////// mask the text
@@ -433,10 +451,11 @@ function mousePressed(){
         }
 
         if(clicks == instructions.length+1){
-            gatherInput();
-            createElement('br')
+            promptQuestions();
+            createElement('br') //newline
             button = createButton('submit');
             button.mousePressed(saveText);
+            back.remove() // back button no longer allowed
         }
     }
 }
@@ -480,4 +499,24 @@ function errData(error) {
     console.log(error);
 }
 
+
+
+
+// debugging function
+function fixValues(){
+
+    for (let k = 0; k < keys.length; k++){
+
+        var txt = lSystem[keys[k]].human
+        lSystem[keys[k]].tree = textToRule(txt);
+    }
+}
+
+function showValues(){
+
+    for (let k = 0; k < keys.length; k++){
+
+        print(lSystem[keys[k]].tree)
+    }
+}
 

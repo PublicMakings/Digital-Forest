@@ -268,6 +268,29 @@ function removeExcessRotation(string){
     return string;
 }
 
+
+function hoppingTruncate(string, interval){
+
+    var loc = interval;
+
+    while (loc < string.length){
+
+        string = deleteChar(string, loc);
+        loc += interval;
+    }
+
+    return [string, loc % string.length] // return both the new string and the potential next starting spot
+}
+
+function allowedCharLength(words){
+
+    var rando = round(random(-0.5*words.length, 0.5*words.length));
+
+    var base = map(words.length, 1, 500, 1, 40); // people probably will not repond with more than 500 words
+
+    return abs(base + rando); // absolute  value of 50-150% of the baseline value
+}
+
 // counts rotations and Fs at each bracket level
 function stringAnalysis(string){
 
