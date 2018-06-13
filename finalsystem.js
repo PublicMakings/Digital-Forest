@@ -105,12 +105,14 @@ function setup() {
 
     // set up DOM
     intro = createP('Welcome.').id('body');
-    wanderbutton = createP('Wander Arboretum').id('choices')
-                                              .style('display','inline-flex')
-                                              .style('margin','0');
     treebutton   = createP('\tCreate Tree').id('choices')
                                            .style('display','inline-flex')
                                            .style('margin-left','15px');
+
+    wanderbutton = createP('Wander Arboretum').id('choices')
+                                              .style('display','inline-flex')
+                                              .style('margin','0')
+                                              .style('color', 'rgba(135, 180, 130, 0.3)');
 
     // wanderbutton.mousePressed(toggleWander); // DONT SET THIS UNTIL DATA COMES BACK FROM SERVER
     treebutton.mousePressed(toggleCreate);
@@ -533,6 +535,7 @@ function gotData(data) {
     keys = Object.keys(lSystem);
 
     wanderbutton.mousePressed(toggleWander);
+    wanderbutton.style('color', treebutton.style("color"));
 
     console.log(lSystem);
     console.log(keys);
