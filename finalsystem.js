@@ -112,7 +112,7 @@ function setup() {
                                            .style('display','inline-flex')
                                            .style('margin-left','15px');
 
-    wanderbutton.mousePressed(toggleWander);
+    // wanderbutton.mousePressed(toggleWander); // DONT SET THIS UNTIL DATA COMES BACK FROM SERVER
     treebutton.mousePressed(toggleCreate);
 
     growthRing();
@@ -531,6 +531,8 @@ function gotData(data) {
 
     lSystem = data.val();
     keys = Object.keys(lSystem);
+
+    wanderbutton.mousePressed(toggleWander);
 
     console.log(lSystem);
     console.log(keys);
