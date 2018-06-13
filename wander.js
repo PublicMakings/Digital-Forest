@@ -5,8 +5,8 @@ var randSeeds = [];
 
 function wander(){
 
-    if (creating) disableCreating();
-    if (wandering)disableWandering();
+    if (creating)  disableCreating();
+    if (wandering) disableWandering();
 
     //make a bunch of clicables for the trees stored in the databse
     createElement('br');
@@ -73,6 +73,7 @@ function disableWandering(){
         arboretum[i].remove();
     }
 
+    if (labeled) caption.remove();
     wandering = false;
 }
 
@@ -103,13 +104,11 @@ function saveText(){
         seedTxt[i].remove();
     }
 
-    disableCreating();
-
     // removeElements();
     forestStory(response);  // this creates the tree from the user text reponse
     sendData(response);     // send the tree to the database
 
-    wander();
+    wander();           // wander() disables creating mode
     retrieveStoredTree(keys.length - 1)
 }
 

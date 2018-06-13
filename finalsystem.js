@@ -33,6 +33,7 @@ var questions = [
                     ]
                 ];
 var intro;
+var titles = {};
 
 // Get input from user
 var seedTxt = [];
@@ -190,9 +191,8 @@ function growthRing(){
 function toggleWander(){
 
     hasSubmitted = true;
-    if (creating) disableCreating();
-
     intro.remove();
+    if (creating) disableCreating();
 
     wander();
     retrieveStoredTree(0); // display the first tree
@@ -202,8 +202,11 @@ function toggleWander(){
 }
 function toggleCreate(){
 
-    if (creating) disableCreating();
     if (wandering) disableWandering();
+    if (creating) {
+        clicks = 0;
+        return;
+    }
 
     hasSubmitted = false;
     creating = true;
@@ -468,7 +471,7 @@ function mousePressed(){
 
 
         if(clicks == instructions.length){
-            intro.remove()
+            intro.remove();
             clicks += 1
 
             promptQuestions();
@@ -483,9 +486,8 @@ function mousePressed(){
 
 function promptQuestions(){
 
-    intro.remove();
     for(var i = 0; i < questions.length;i++){
-        intro = createP(questions[i][0]).id('instructions');
+        titles[i] = createP(questions[i][0]).id('instructions');
         seedTxt[i] = createElement('textarea', questions[i][1]).id('corpora');
         seedTxt[i].mousePressed(cleartxt);
     }
@@ -498,10 +500,17 @@ function cleartxt(){
 
 function disableCreating(){
 
+    if (!creating)
+        return;
+
+
     intro.remove();
     next.remove();
     back.remove();
+    if (button != undefined) button.remove();
+
     for(var i = 0; i < seedTxt.length; i++){
+        titles[i].remove();
         seedTxt[i].remove();
     }
 
