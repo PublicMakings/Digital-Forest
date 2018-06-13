@@ -15,7 +15,7 @@ p5.js interactive artwork about narratives of trees.
 - [ ] add angle selection to setTreeParameters
 - [ ] wait for firebase (loop/noLoop for example)
 - [x] clicking on a mode button (wander or create) while html objects are already onscreen doubles them
-- [ ] repeated number issue (rand num?)
+- [x] repeated number issue (rand num?)
 
 - [ ] sanitize filter
 - [x] Binary background
