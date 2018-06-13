@@ -102,6 +102,7 @@ function charValuesRules(words){
 function cleanUp(string){
 
     string = removeUnpairedBrackets(string);
+    string = GsToMinus(string);
     string = removeRepeatRotation(string);
     string = removeExcessRotation(string);
     string = removeEmptyBrackets(string);
@@ -282,6 +283,37 @@ function hoppingTruncate(string, interval){
     return [string, loc % string.length] // return both the new string and the potential next starting spot
 }
 
+function GsToMinus(string){
+
+    var loc = 0;
+    var counter = 0;
+
+    var letter;
+    for (let n = string.length - 1; n >= 0; n--){ // count backwards
+        letter = string.charAt(n);
+
+        if (letter == "G")
+        {
+            if (counter == 0) loc = n;  // remember the location
+
+            counter += 1;
+        }
+        else {
+
+
+
+            counter = 0
+        }
+
+        if (counter == GminusRatio){
+            string = string.slice(0, n) + "-" + string.slice(loc+1) // n is smaller than loc because counting backwards
+            counter = 0;
+        }
+
+    }
+    return string;
+}
+
 function allowedCharLength(words){
 
     var base = 8 + 40*smoothstep(1, 100, words.length);
@@ -365,9 +397,9 @@ function clamp(num, min, max) {
   return num <= min ? min : num >= max ? max : num;
 }
 
-function smoothstep(edge0, edge1, x) {
+function smoothstep(low, high, x) {
   // Scale, and clamp x to 0..1 range
-  x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+  x = clamp((x - low) / (high - low), 0.0, 1.0);
   // Evaluate polynomial
-  return x * x * x * (x * (x * 6 - 15) + 10);
+  return x * x * x * (x * (x * 6 - 15) + 10); // 6x^5 - 15x^4 + 10x^3
 }
