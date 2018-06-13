@@ -10,12 +10,12 @@ p5.js interactive artwork about narratives of trees.
 - [x] add axiom stringto binary background
 - [x] translucent mask over introductory tree
 - [x] display text at the bottom
-- [ ] fix formatting for wander buttons/captions which overlap with other objects often
 <!-- - [ ] change items already stored in the database to make sure they're rules rather than full lsystems [NOTE: no longer necessary, workaround in effect in retrieveStoredTree] -->
 - [x] clicking on a mode button (wander or create) while html objects are already onscreen doubles them
 - [x] clicking on a number more than once may yield different results (rand num issue?)
+- [X] wait for firebase (loop/noLoop for example)
+- [ ] fix formatting for wander buttons/captions which overlap with other objects often
 - [ ] add angle selection to setTreeParameters
-- [ ] wait for firebase (loop/noLoop for example)
 
 - [ ] sanitize filter
 - [x] Binary background
