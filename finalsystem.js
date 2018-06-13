@@ -148,6 +148,7 @@ function draw(){
         strokeWeight(2);
         stroke(100, 100);
         CircleMask(0.95);
+        darkenEdges(0.95, 40, 50, 2, 150); // adds a shadow-like rim
     }
 
     /////// draw the tree
@@ -166,7 +167,6 @@ function draw(){
         noStroke();
         rect(0, 0, width, height);
     }
-
 }
 
 
@@ -229,9 +229,6 @@ function toggleCreate(){
     treebutton.parent('navigation');
 }
 
-//AO bit
-// TA: should this run always or just during the "introduction phase"
-// AO: Always, ?
 function introduction(){
 
     background(255);
@@ -316,6 +313,28 @@ function CircleMask(factor){
 
     endShape(CLOSE);
 }
+
+function darkenEdges(sizefactor, iters, opac, sw, col){
+
+    var rx = width * sizefactor;
+    var ry = height * sizefactor;
+
+    noFill();
+    strokeWeight(sw);
+
+    var subs = opac/iters;
+    for (let i = 0; i < iters; i ++){
+
+        stroke(col, opac);
+        ellipse(width/2, height/2, rx, ry);
+
+        opac -= subs;
+        rx -= sw;
+        ry -= sw;
+    }
+}
+
+
 
 function resetLSystems(){
     // creates the lsystem strings for the global `branchings` and `roots`
