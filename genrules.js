@@ -284,11 +284,11 @@ function hoppingTruncate(string, interval){
 
 function allowedCharLength(words){
 
-    var rando = round(random(-0.5*words.length, 0.5*words.length));
+    var base = 8 + 40*smoothstep(1, 100, words.length);
 
-    var base = map(words.length, 1, 500, 1, 40); // people probably will not repond with more than 500 words
+    var rando = random(-0.2*base, 0.2*base);
 
-    return abs(base + rando); // absolute  value of 50-150% of the baseline value
+    return abs(round(base + rando)) + 1; // absolute  value of 80-120% of the baseline value (+1 so that it's never 0)
 }
 
 // counts rotations and Fs at each bracket level
@@ -358,4 +358,16 @@ function isBracket(letter){
 // E,g, `deleteChar("this", 1) == "tis"`
 function deleteChar(string, n){
     return string.slice(0, n) + string.slice(n + 1);
+}
+
+
+function clamp(num, min, max) {
+  return num <= min ? min : num >= max ? max : num;
+}
+
+function smoothstep(edge0, edge1, x) {
+  // Scale, and clamp x to 0..1 range
+  x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+  // Evaluate polynomial
+  return x * x * x * (x * (x * 6 - 15) + 10);
 }
