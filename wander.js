@@ -5,6 +5,9 @@ var randSeeds = [];
 
 function wander(){
 
+    if (creating) disableCreating();
+    if (wandering)disableWandering();
+
     //make a bunch of clicables for the trees stored in the databse
     createElement('br');
     createP('').id('nursery').parent('footer');
@@ -22,6 +25,8 @@ function wander(){
         //this is supposed to call the old tree files
         arboretum[i].mouseClicked(specimens);
     }
+
+    wandering = true;
 }
 
 function specimens(evt){
@@ -37,14 +42,22 @@ var labeled = false;    // aren't all trees labeled? TODO: figure out why this i
 
 function retrieveStoredTree(num){
 
-    branchings = treeStories[num]; // would be better if what we retrieved was the rule, and we recreated the Lsystem
-    txt = humanStories[num];
-    bintext = textToBin(txt);
-    setTreeParameters();
+    // branchings = treeStories[num]; // would be better if what we retrieved was the rule, and we recreated the Lsystem
+
+    // rules[0].b = treeStories[num];
+    // resetLSystems();
 
     // it's ok to set these both as the same seed, since they affect vastly different things
+    // make suer to set the seed first
     randomSeed(randSeeds[num]);
     noiseSeed(randSeeds[num]);
+
+    txt = humanStories[num];
+    rules[0].b = textToRule(txt);
+    bintext = textToBin(txt);
+
+    resetLSystems();
+    setTreeParameters();
 
     if(labeled){caption.remove();}  // aren't all trees captioned?
     caption = createElement('p1',txt).id('caption').parent('captions');
@@ -54,21 +67,15 @@ function retrieveStoredTree(num){
 
 
 
+function disableWandering(){
 
-function promptQuestions(){
+    for(var i = 0; i<arboretum.length; i++){
+        arboretum[i].remove();
+    }
 
-    intro.remove();
-    for(var i = 0; i < questions.length;i++){
-        intro = createP(questions[i][0]).id('instructions');
-        seedTxt[i] = createElement('textarea', questions[i][1]).id('corpora');
-        seedTxt[i].mousePressed(cleartxt);
-    }
+    wandering = false;
 }
-function cleartxt(){
-    for(var i = 0; i < seedTxt.length; i++){
-        seedTxt[i].html('');
-    }
-}
+
 
 function saveText(){
 
@@ -96,29 +103,38 @@ function saveText(){
         seedTxt[i].remove();
     }
 
-    intro.remove();
-    removeElements();
+    disableCreating();
+
+    // removeElements();
     forestStory(response);  // this creates the tree from the user text reponse
-    patterning();
+    sendData(response);     // send the tree to the database
 
     wander();
+    retrieveStoredTree(keys.length - 1)
 }
 
 
 // sends data to firebase
-function patterning() {
+function sendData(response) {
     var trees = database.ref('patterns');
+
+    var pattern = patterning(response);
+
+    var tree = trees.push(pattern, finished);
+    console.log("imagined tree" + tree.key);
+}
+
+function patterning(humantext){
 
     var pattern = {
         // don't change these parameters without letting AO know, the firebase server will need some security rules changed
-        tree:   textToRule(response),
-        human:  response,
+        tree:   textToRule(humantext),
+        human:  humantext,
         seed:   random(60),
         fork1:  random(8, 17),
 //        fork2:random(pattern.fork1-1,patern.fork1+3,),
         length: random(height/random(8, 14))
     }
 
-    var tree = trees.push(pattern, finished);
-    console.log("imagined tree" + tree.key);
+    return pattern;
 }

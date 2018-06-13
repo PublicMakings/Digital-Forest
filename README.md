@@ -5,11 +5,17 @@ p5.js interactive artwork about narratives of trees.
 ### *Coding*
 - [X] bring buttons into style of site
 - [X] add permenant buttons at button
-- [ ] add a back and next, which adjusts click count during creating
-- [ ] make create button funtion during wandering
+- [X] add a back and next, which adjusts click count during creating
+- [x] make create button funtion during wandering
 - [x] add axiom stringto binary background
 - [x] translucent mask over introductory tree
 - [x] display text at the bottom
+- [ ] fix formatting for wander buttons/captions which overlap with other objects often
+<!-- - [ ] change items already stored in the database to make sure they're rules rather than full lsystems [NOTE: no longer necessary, workaround in effect in retrieveStoredTree] -->
+- [ ] add angle selection to setTreeParameters
+- [ ] wait for firebase (loop/noLoop for example)
+- [x] clicking on a mode button (wander or create) while html objects are already onscreen doubles them
+- [ ] repeated number issue (rand num?)
 
 - [ ] sanitize filter
 - [x] Binary background
@@ -38,7 +44,7 @@ p5.js interactive artwork about narratives of trees.
 * [Rule play](http://www.kevs3d.co.uk/dev/lsystems/)
 * [l system renederer](https://github.com/piratefsh/p5js-art)
 * [algorithmic botany](http://algorithmicbotany.org/papers/abop/abop-ch1.pdf)
-<!--- * [student project](https://people.ece.cornell.edu/land/OldStudentProjects/cs490-94to95/hwchen/)---> 
+<!--- * [student project](https://people.ece.cornell.edu/land/OldStudentProjects/cs490-94to95/hwchen/)--->
 * [Creepy tree](https://picandnic.wordpress.com/2018/01/30/creepy-tree/)
 * [gentle sway](https://github.com/AdaZhao1211/noc/tree/master/binaryTree)
 

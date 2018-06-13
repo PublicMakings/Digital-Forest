@@ -44,6 +44,7 @@ var listItems = [];
 var database;
 var clicks = 0;
 var creating = false;
+var wandering = false;
 
 var sunlight = false;
 
@@ -189,9 +190,9 @@ function growthRing(){
 function toggleWander(){
 
     hasSubmitted = true;
+    if (creating) disableCreating();
+
     intro.remove();
-    // wanderbutton.remove();
-    // treebutton.remove();
 
     wander();
     retrieveStoredTree(0); // display the first tree
@@ -201,6 +202,9 @@ function toggleWander(){
 }
 function toggleCreate(){
 
+    if (creating) disableCreating();
+    if (wandering) disableWandering();
+
     hasSubmitted = false;
     creating = true;
     clicks = 0
@@ -208,7 +212,13 @@ function toggleCreate(){
     back = createP('back').id('choices')
                           .style('display','inline-flex')
                           .style('margin','0');
-    back.mousePressed(() => clicks -= 2 );
+
+    next = createP('next').id('choices')
+                          .style('display','inline-flex')
+                          .style('margin','0');
+
+    back.mousePressed( () => clicks -= 1 );
+    next.mousePressed( () => clicks += 1 );
 
     wanderbutton.parent('navigation');
     treebutton.parent('navigation');
@@ -255,7 +265,7 @@ function keyReleased(){
 
 
 function updateWind(){
-    windFactor = 1 + sin(d)/90;
+    windFactor = 1 + sin(d)/70;
     d += noise(d)/8;
 }
 
@@ -435,29 +445,67 @@ function toggleRoots(){ drawRoots = !drawRoots; }
 
 function mousePressed(){
 
+    sunlight = true;
+
     if (!hasSubmitted && creating){
-        clicks += 1;
 
-        for(var i = 0; i < instructions.length; i++){
+        // for(var i = 0; i < instructions.length; i++){
 
-            if(clicks == i){
-                intro.remove();
-                intro = createP(instructions[i]).id('body')
-            }
-            else if(clicks == instructions.length){
-                sunlight = true;
-            }
+        //     if(clicks == i){
+        //         intro.remove();
+        //         intro = createP(instructions[i]).id('body')
+        //     }
+        //     else if(clicks == instructions.length){
+        //         sunlight = true;
+        //     }
 
+        // }
+
+        if (clicks < instructions.length){
+            intro.remove();
+            intro = createP(instructions[clicks]).id('body');
         }
 
-        if(clicks == instructions.length+1){
+
+        if(clicks == instructions.length){
+            intro.remove()
+            clicks += 1
+
             promptQuestions();
             createElement('br') //newline
             button = createButton('submit');
             button.mousePressed(saveText);
-            back.remove() // back button no longer allowed
+            back.remove(); // back button no longer allowed
+            next.remove(); // next button no longer allowed
         }
     }
+}
+
+function promptQuestions(){
+
+    intro.remove();
+    for(var i = 0; i < questions.length;i++){
+        intro = createP(questions[i][0]).id('instructions');
+        seedTxt[i] = createElement('textarea', questions[i][1]).id('corpora');
+        seedTxt[i].mousePressed(cleartxt);
+    }
+}
+function cleartxt(){
+    for(var i = 0; i < seedTxt.length; i++){
+        seedTxt[i].html('');
+    }
+}
+
+function disableCreating(){
+
+    intro.remove();
+    next.remove();
+    back.remove();
+    for(var i = 0; i < seedTxt.length; i++){
+        seedTxt[i].remove();
+    }
+
+    creating = false;
 }
 
 
@@ -503,14 +551,6 @@ function errData(error) {
 
 
 // debugging function
-function fixValues(){
-
-    for (let k = 0; k < keys.length; k++){
-
-        var txt = lSystem[keys[k]].human
-        lSystem[keys[k]].tree = textToRule(txt);
-    }
-}
 
 function showValues(){
 
@@ -520,3 +560,36 @@ function showValues(){
     }
 }
 
+// temporary data-altering function:
+
+function fixValues(){
+
+    var trees = database.ref("patterns");
+
+    var updates = {};
+    for (let i = 0; i < keys.length; i++){
+
+        var k = keys[i];
+        var txt = lSystem[k].human
+
+        updates[k] = patterning(txt);
+    }
+
+    trees.update(updates);
+}
+
+function swapValue(num){
+
+    var trees = database.ref("patterns");
+    var k = keys[num];
+    var txt = lSystem[k].human;
+    var pattern = patterning(txt);
+
+    trees.child(k).remove( function(error){
+
+        if (error)
+            print(error)
+        else
+            sendData(txt)
+    });
+}
