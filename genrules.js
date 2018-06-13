@@ -2,10 +2,17 @@
 var languageForest = {
         tree: "[FF]",
         trees: "[F-F+]",
-        rhizome: "+",
+        rhizome: "F[-F]",
         rhizomes: "F[-F]",
         leaf: "G",
-        leaves: "F[GF+F]"
+        leaves: "F[GF+F]",
+        stem:  "[+F-F]",
+        trunk: "FF[+F--F]",
+        bark:  "F+[GF-F]+F",
+        rings: "[+FGF][-FGF]",
+        branch:    "F",
+        branching: "F",
+        branches:  "F"
     };
 
 var lengthBasedRules = {
@@ -17,9 +24,14 @@ var lengthBasedRules = {
              "-[F",
              "[G"],
 
-        20: ["FG]",
-             "F[GF]",
-             "FF]G"]
+        20: ["F[+F]F[+F]F",
+             "F[-F]F[-F]F",
+             "F[+F]F[-F]F"],
+
+        30: ["FF-[-F+F+F]+[+F-F-F]",
+             "FF+[+F+F-F]+[-F-F-F]",
+             "FF-[+F][-F]+[-F+F-F]"]
+
     };
 
 
