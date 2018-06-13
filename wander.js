@@ -9,8 +9,8 @@ function wander(){
     if (wandering) disableWandering();
 
     //make a bunch of clicables for the trees stored in the databse
-    createElement('br');
-    createP('').id('nursery').parent('footer');
+    // createElement('br');
+    // createP('').id('nursery').parent('captions');
     for(var i = 0; i<keys.length; i++){
 
         //get data
@@ -32,8 +32,9 @@ function wander(){
 function specimens(evt){
     //this gets the number of the div and that can index humanstories and treestories
     const num = +evt.target.textContent;
-    print(treeStories[num]);
+    // print(treeStories[num]);
 
+    lookingAt = num;
     retrieveStoredTree(num);
 }
 
@@ -48,7 +49,7 @@ function retrieveStoredTree(num){
     // resetLSystems();
 
     // it's ok to set these both as the same seed, since they affect vastly different things
-    // make suer to set the seed first
+    // make sure to set the seeds first!!
     randomSeed(randSeeds[num]);
     noiseSeed(randSeeds[num]);
 
@@ -59,12 +60,17 @@ function retrieveStoredTree(num){
     resetLSystems();
     setTreeParameters();
 
-    if(labeled){caption.remove();}  // aren't all trees captioned?
-    caption = createElement('p1',txt).id('caption').parent('captions');
-    caption.html(humanStories[num]);
-    labeled = true;
+    captionTree(humanStories[num]);
 }
 
+function captionTree(text){
+
+    if (labeled) caption.remove();
+
+    caption = createElement('p1', text).id('caption').parent('captions');
+    // caption.html(text);
+    labeled = true;
+}
 
 
 function disableWandering(){

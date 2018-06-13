@@ -78,6 +78,8 @@ var treeLoc = 0.7; // as a fraction of the canvas height
 var trunkCol, woodCol, rootCol;
 var drawRoots = true;
 
+var lookingAt = 0;
+
 var rules = [];
 rules[0] = {
   a: "F",
@@ -197,7 +199,7 @@ function toggleWander(){
     if (creating) disableCreating();
 
     wander();
-    retrieveStoredTree(0); // display the first tree
+    retrieveStoredTree(lookingAt); // display the first tree
 
     wanderbutton.parent('navigation');
     treebutton.parent('navigation');
@@ -473,18 +475,6 @@ function mousePressed(){
 
     if (!hasSubmitted && creating){
 
-        // for(var i = 0; i < instructions.length; i++){
-
-        //     if(clicks == i){
-        //         intro.remove();
-        //         intro = createP(instructions[i]).id('body')
-        //     }
-        //     else if(clicks == instructions.length){
-        //         sunlight = true;
-        //     }
-
-        // }
-
         if (clicks < instructions.length){
             intro.remove();
             intro = createP(instructions[clicks]).id('body');
@@ -492,9 +482,10 @@ function mousePressed(){
 
 
         if(clicks == instructions.length){
-            intro.remove();
-            clicks += 1
 
+            clicks += 1;
+
+            intro.remove();
             promptQuestions();
             createElement('br') //newline
             button = createButton('submit');
@@ -543,6 +534,8 @@ function disableCreating(){
 function loadFirebase() {
     var ref = database.ref("patterns");
     //ping when there is new data.
+
+    ref.once("value", allowWander, errData);
     ref.on("value", gotData, errData);
 }
 
@@ -553,12 +546,16 @@ function gotData(data) {
     lSystem = data.val();
     keys = Object.keys(lSystem);
 
-    wanderbutton.mousePressed(toggleWander);
-    wanderbutton.style('color', treebutton.style("color"));
-
     console.log(lSystem);
     console.log(keys);
     console.log(data);
+}
+
+function allowWander(){
+
+    wanderbutton.mousePressed(toggleWander);
+    wanderbutton.style('color', treebutton.style("color"));
+
 }
 
 ////////////////////
