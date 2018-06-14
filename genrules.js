@@ -270,13 +270,10 @@ function removeExcessRotation(string){
     for (let n = string.length - 1; n >= 0; n--){
         letter = string.charAt(n);
 
-        if (letter == "]"){
-            foundF = false;
-        } else if (letter == "F"){
-            foundF = true;
-        } else if (letter != "[" && !foundF){
-            string = deleteChar(string, n);
-        }
+        if      (letter == "]")                         foundF = false;
+        else if (letter == "F")                         foundF = true;
+        else if (isAngleCharacter(letter) && !foundF)   string = deleteChar(string, n);
+
     }
     return string;
 }
@@ -310,14 +307,10 @@ function GsToMinus(string){
 
             counter += 1;
         }
-        else {
+        else counter = 0;
 
 
-
-            counter = 0
-        }
-
-        if (counter == GminusRatio){
+        if (counter == GminusRatio){ // the problem with this is that GminusRatio is subject to change
             string = string.slice(0, n) + "-" + string.slice(loc+1) // n is smaller than loc because counting backwards
             counter = 0;
         }
@@ -334,6 +327,38 @@ function allowedCharLength(words){
 
     return abs(round(base + rando)) + 1; // absolute  value of 80-120% of the baseline value (+1 so that it's never 0)
 }
+
+
+function ensureBrackets(string){
+
+    var count = 0;
+
+    for (let n = 0; n < string.length; n++)
+        if (string.charAt(n) == "[") count += 1;
+
+
+    if (count < 1){
+
+        // add N sets of random brackets
+        let N = round(random(1, 4));
+        for (let i = 0; i < 2; i++){
+
+            var rand1 = floor(random(0, string.length - 2));
+            var rand2 = ceil(random(rand1, string.length - 1));
+
+            string = addBracketSet(string, rand1, rand2);
+        }
+
+    }
+
+    return cleanUp(string);
+}
+
+function addBracketSet(string, open, length){
+
+    return  string = string.slice(0, open) + "[" + string.slice(open, open + length) + "]" + string.slice(open + length);
+}
+
 
 // counts rotations and Fs at each bracket level
 function stringAnalysis(string){

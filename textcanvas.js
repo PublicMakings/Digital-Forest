@@ -55,6 +55,8 @@ function textToRule(words){
         if (n == 0) n = round(random(1, 5));
     }
 
+    newRule = ensureBrackets(newRule); // make sure there are brackets if there aren't already
+
     newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
     newRule = addSpaces(newRule); // this is just so the strings can print in the background
 

@@ -142,7 +142,7 @@ function draw(){
 
         fill(220, 220, 200, 110);
         stroke(220, 220, 200, 110);
-        text(branchings.substr(0, 1600), 0, -10, width, height);
+        text(branchings.substr(0, 1600), 0, -15, width, height);
 
 
         /////// mask the text
@@ -150,7 +150,7 @@ function draw(){
         strokeWeight(2);
         stroke(100, 100);
         CircleMask(0.95);
-        darkenEdges(0.95, 40, 50, 2, 150); // adds a shadow-like rim
+        darkenEdges(0.95, 50, 20, 1.5, 100); // adds a shadow-like rim
     }
 
     /////// draw the tree
