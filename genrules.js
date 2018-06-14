@@ -339,7 +339,7 @@ function ensureBrackets(string){
 
     if (count < 1){
 
-        // add N sets of random brackets
+        // add N (a random number) sets of random brackets
         let N = round(random(1, 4));
         for (let i = 0; i < 2; i++){
 
@@ -348,16 +348,48 @@ function ensureBrackets(string){
 
             string = addBracketSet(string, rand1, rand2);
         }
-
     }
 
-    return cleanUp(string);
+    return cleanUp(string); // cleanup in case there are broken bracket sets
 }
 
-function addBracketSet(string, open, length){
+function addBracketSet(string, open, close){
 
-    return  string = string.slice(0, open) + "[" + string.slice(open, open + length) + "]" + string.slice(open + length);
+    return string.slice(0, open) + "[" + string.slice(open, close) + "]" + string.slice(close);
 }
+
+
+function ensureRotation(string){
+
+    analysis = stringAnalysis(string);
+
+    var rotation = false;
+    for (let i = 0; i < analysis["+"].length; i++){
+
+        if (analysis["+"][i] > 0 || analysis["-"][i] > 0)
+            rotation = true;
+    }
+
+    if (!rotation)
+        for (let i = 0; i < 2; i++) // add two random rotations
+            string = addRandomRotation(string);
+
+    return string;
+}
+
+function addRandomRotation(string){
+
+    var location = floor(random(0, string.length - 2)); // rotation can't be the last character;
+
+    var selector = random();
+
+    var rotation = "G";
+    if      (selector < 0.33)   rotation = "+";
+    else if (selector < 0.66)   rotation = "-";
+
+    return string.slice(0, location) + rotation + string.slice(location);
+}
+
 
 
 // counts rotations and Fs at each bracket level

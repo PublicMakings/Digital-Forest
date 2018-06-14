@@ -44,8 +44,11 @@ function textToRule(words){
     newRule += semanticRules(words);
     newRule += charCountRules(words);
     newRule += charValuesRules(words);
+
+    // Do an initial cleanup of the result from above, then start fixing it if it isn't robust enough
     newRule = cleanUp(newRule);
 
+    // Shorten the string if it's too long
     var L = allowedCharLength(words);
     var n = round(random(1, 5));
     while (newRule.length > L){
@@ -55,7 +58,11 @@ function textToRule(words){
         if (n == 0) n = round(random(1, 5));
     }
 
-    newRule = ensureBrackets(newRule); // make sure there are brackets if there aren't already
+    // Ensure there are brackets if there aren't already
+    newRule = ensureBrackets(newRule);
+
+    // Ensure there are rotation characters present, and if not add them in.
+    newRule = ensureRotation(newRule);
 
     newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
     newRule = addSpaces(newRule); // this is just so the strings can print in the background
@@ -126,7 +133,7 @@ function setTreeParameters(){
 
 // redo this to include rotation also (i.e. effective length).
 function setLen(n_Fs){
-    return len = 0.9 * height/(2*n_Fs);
+    return len = 0.95 * height/(2*n_Fs);
 }
 
 
