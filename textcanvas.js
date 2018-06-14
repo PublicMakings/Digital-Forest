@@ -3,7 +3,7 @@
 
 var textField;
 var submit, wanderbutton, treebutton;
-var back;
+var back, next;
 var txt, bintext;
 
 var hasSubmitted = false;
@@ -14,11 +14,7 @@ var delimiters = [" ", ",", "\n", ".", "\t", ":", ";", "?", "!", "'"];
 var caption
 function forestStory(txt){
 
-
     hasSubmitted = true;
-    creating     = false;
-
-
 
     caption = createElement('p1',txt).id('caption').parent('captions');
     labeled = true;
@@ -30,8 +26,8 @@ function forestStory(txt){
 
     rules[0].b = newRule;
 
-    resetLSystems();
-    setTreeParameters();
+    // resetLSystems();
+    // setTreeParameters();
 
     print(textToBin(txt));
     print("new rule: F -> ", newRule);
@@ -48,6 +44,7 @@ function textToRule(words){
     newRule += semanticRules(words);
     newRule += charCountRules(words);
     newRule += charValuesRules(words);
+    newRule = cleanUp(newRule);
 
     var L = allowedCharLength(words);
     var n = round(random(1, 5));

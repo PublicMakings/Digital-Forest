@@ -33,6 +33,7 @@ var questions = [
                     ]
                 ];
 var intro;
+var titles = {};
 
 // Get input from user
 var seedTxt = [];
@@ -44,6 +45,7 @@ var listItems = [];
 var database;
 var clicks = 0;
 var creating = false;
+var wandering = false;
 
 var sunlight = false;
 
@@ -76,6 +78,8 @@ var treeLoc = 0.7; // as a fraction of the canvas height
 var trunkCol, woodCol, rootCol;
 var drawRoots = true;
 
+var lookingAt = 0;
+
 var rules = [];
 rules[0] = {
   a: "F",
@@ -103,14 +107,16 @@ function setup() {
 
     // set up DOM
     intro = createP('Welcome.').id('body');
-    wanderbutton = createP('Wander Arboretum').id('choices')
-                                              .style('display','inline-flex')
-                                              .style('margin','0');
     treebutton   = createP('\tCreate Tree').id('choices')
                                            .style('display','inline-flex')
                                            .style('margin-left','15px');
 
-    wanderbutton.mousePressed(toggleWander);
+    wanderbutton = createP('Wander Arboretum').id('choices')
+                                              .style('display','inline-flex')
+                                              .style('margin','0')
+                                              .style('color', 'rgba(135, 180, 130, 0.3)');
+
+    // wanderbutton.mousePressed(toggleWander); // DONT SET THIS UNTIL DATA COMES BACK FROM SERVER
     treebutton.mousePressed(toggleCreate);
 
     growthRing();
@@ -144,6 +150,7 @@ function draw(){
         strokeWeight(2);
         stroke(100, 100);
         CircleMask(0.95);
+        darkenEdges(0.95, 40, 50, 2, 150); // adds a shadow-like rim
     }
 
     /////// draw the tree
@@ -162,7 +169,6 @@ function draw(){
         noStroke();
         rect(0, 0, width, height);
     }
-
 }
 
 
@@ -190,16 +196,21 @@ function toggleWander(){
 
     hasSubmitted = true;
     intro.remove();
-    // wanderbutton.remove();
-    // treebutton.remove();
+    if (creating) disableCreating();
 
     wander();
-    retrieveStoredTree(0); // display the first tree
+    retrieveStoredTree(lookingAt); // display the first tree
 
     wanderbutton.parent('navigation');
     treebutton.parent('navigation');
 }
 function toggleCreate(){
+
+    if (wandering) disableWandering();
+    if (creating) {
+        clicks = 0;
+        return;
+    }
 
     hasSubmitted = false;
     creating = true;
@@ -208,15 +219,18 @@ function toggleCreate(){
     back = createP('back').id('choices')
                           .style('display','inline-flex')
                           .style('margin','0');
-    back.mousePressed(() => clicks -= 2 );
+
+    next = createP('next').id('choices')
+                          .style('display','inline-flex')
+                          .style('margin','0');
+
+    back.mousePressed( () => clicks -= 1 );
+    next.mousePressed( () => clicks += 1 );
 
     wanderbutton.parent('navigation');
     treebutton.parent('navigation');
 }
 
-//AO bit
-// TA: should this run always or just during the "introduction phase"
-// AO: Always, ?
 function introduction(){
 
     background(255);
@@ -255,7 +269,7 @@ function keyReleased(){
 
 
 function updateWind(){
-    windFactor = 1 + sin(d)/90;
+    windFactor = 1 + sin(d)/70;
     d += noise(d)/8;
 }
 
@@ -301,6 +315,28 @@ function CircleMask(factor){
 
     endShape(CLOSE);
 }
+
+function darkenEdges(sizefactor, iters, opac, sw, col){
+
+    var rx = width * sizefactor;
+    var ry = height * sizefactor;
+
+    noFill();
+    strokeWeight(sw);
+
+    var subs = opac/iters;
+    for (let i = 0; i < iters; i ++){
+
+        stroke(col, opac);
+        ellipse(width/2, height/2, rx, ry);
+
+        opac -= subs;
+        rx -= sw;
+        ry -= sw;
+    }
+}
+
+
 
 function resetLSystems(){
     // creates the lsystem strings for the global `branchings` and `roots`
@@ -435,29 +471,62 @@ function toggleRoots(){ drawRoots = !drawRoots; }
 
 function mousePressed(){
 
+    sunlight = true;
+
     if (!hasSubmitted && creating){
-        clicks += 1;
 
-        for(var i = 0; i < instructions.length; i++){
-
-            if(clicks == i){
-                intro.remove();
-                intro = createP(instructions[i]).id('body')
-            }
-            else if(clicks == instructions.length){
-                sunlight = true;
-            }
-
+        if (clicks < instructions.length){
+            intro.remove();
+            intro = createP(instructions[clicks]).id('body');
         }
 
-        if(clicks == instructions.length+1){
+
+        if(clicks == instructions.length){
+
+            clicks += 1;
+
+            intro.remove();
             promptQuestions();
             createElement('br') //newline
             button = createButton('submit');
             button.mousePressed(saveText);
-            back.remove() // back button no longer allowed
+            back.remove(); // back button no longer allowed
+            next.remove(); // next button no longer allowed
         }
     }
+}
+
+function promptQuestions(){
+
+    for(var i = 0; i < questions.length;i++){
+        titles[i] = createP(questions[i][0]).id('instructions');
+        seedTxt[i] = createElement('textarea', questions[i][1]).id('corpora');
+        seedTxt[i].mousePressed(cleartxt);
+    }
+}
+function cleartxt(){
+    for(var i = 0; i < seedTxt.length; i++){
+        seedTxt[i].html('');
+    }
+}
+
+function disableCreating(){
+
+    if (!creating)
+        return;
+
+
+    intro.remove();
+    next.remove();
+    back.remove();
+    if (button != undefined) button.remove();
+
+    for(var i = 0; i < seedTxt.length; i++){
+        titles[i].remove();
+        seedTxt[i].remove();
+    }
+
+    creating = false;
 }
 
 
@@ -465,6 +534,8 @@ function mousePressed(){
 function loadFirebase() {
     var ref = database.ref("patterns");
     //ping when there is new data.
+
+    ref.once("value", allowWander, errData);
     ref.on("value", gotData, errData);
 }
 
@@ -478,6 +549,13 @@ function gotData(data) {
     console.log(lSystem);
     console.log(keys);
     console.log(data);
+}
+
+function allowWander(){
+
+    wanderbutton.mousePressed(toggleWander);
+    wanderbutton.style('color', treebutton.style("color"));
+
 }
 
 ////////////////////
@@ -503,14 +581,6 @@ function errData(error) {
 
 
 // debugging function
-function fixValues(){
-
-    for (let k = 0; k < keys.length; k++){
-
-        var txt = lSystem[keys[k]].human
-        lSystem[keys[k]].tree = textToRule(txt);
-    }
-}
 
 function showValues(){
 
@@ -520,3 +590,36 @@ function showValues(){
     }
 }
 
+// temporary data-altering function:
+
+function fixValues(){
+
+    var trees = database.ref("patterns");
+
+    var updates = {};
+    for (let i = 0; i < keys.length; i++){
+
+        var k = keys[i];
+        var txt = lSystem[k].human
+
+        updates[k] = patterning(txt);
+    }
+
+    trees.update(updates);
+}
+
+function swapValue(num){
+
+    var trees = database.ref("patterns");
+    var k = keys[num];
+    var txt = lSystem[k].human;
+    var pattern = patterning(txt);
+
+    trees.child(k).remove( function(error){
+
+        if (error)
+            print(error)
+        else
+            sendData(txt)
+    });
+}

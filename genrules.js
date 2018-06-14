@@ -2,10 +2,17 @@
 var languageForest = {
         tree: "[FF]",
         trees: "[F-F+]",
-        rhizome: "+",
+        rhizome: "F[-F]",
         rhizomes: "F[-F]",
         leaf: "G",
-        leaves: "F[GF+F]"
+        leaves: "F[GF+F]",
+        stem:  "[+F-F]",
+        trunk: "FF[+F--F]",
+        bark:  "F+[GF-F]+F",
+        rings: "[+FGF][-FGF]",
+        branch:    "F",
+        branching: "F",
+        branches:  "F"
     };
 
 var lengthBasedRules = {
@@ -17,9 +24,14 @@ var lengthBasedRules = {
              "-[F",
              "[G"],
 
-        20: ["FG]",
-             "F[GF]",
-             "FF]G"]
+        20: ["F[+F]F[+F]F",
+             "F[-F]F[-F]F",
+             "F[+F]F[-F]F"],
+
+        30: ["FF-[-F+F+F]+[+F-F-F]",
+             "FF+[+F+F-F]+[-F-F-F]",
+             "FF-[+F][-F]+[-F+F-F]"]
+
     };
 
 
@@ -102,6 +114,7 @@ function charValuesRules(words){
 function cleanUp(string){
 
     string = removeUnpairedBrackets(string);
+    string = GsToMinus(string);
     string = removeRepeatRotation(string);
     string = removeExcessRotation(string);
     string = removeEmptyBrackets(string);
@@ -282,13 +295,44 @@ function hoppingTruncate(string, interval){
     return [string, loc % string.length] // return both the new string and the potential next starting spot
 }
 
+function GsToMinus(string){
+
+    var loc = 0;
+    var counter = 0;
+
+    var letter;
+    for (let n = string.length - 1; n >= 0; n--){ // count backwards
+        letter = string.charAt(n);
+
+        if (letter == "G")
+        {
+            if (counter == 0) loc = n;  // remember the location
+
+            counter += 1;
+        }
+        else {
+
+
+
+            counter = 0
+        }
+
+        if (counter == GminusRatio){
+            string = string.slice(0, n) + "-" + string.slice(loc+1) // n is smaller than loc because counting backwards
+            counter = 0;
+        }
+
+    }
+    return string;
+}
+
 function allowedCharLength(words){
 
-    var rando = round(random(-0.5*words.length, 0.5*words.length));
+    var base = 8 + 40*smoothstep(1, 100, words.length);
 
-    var base = map(words.length, 1, 500, 1, 40); // people probably will not repond with more than 500 words
+    var rando = random(-0.2*base, 0.2*base);
 
-    return abs(base + rando); // absolute  value of 50-150% of the baseline value
+    return abs(round(base + rando)) + 1; // absolute  value of 80-120% of the baseline value (+1 so that it's never 0)
 }
 
 // counts rotations and Fs at each bracket level
@@ -358,4 +402,16 @@ function isBracket(letter){
 // E,g, `deleteChar("this", 1) == "tis"`
 function deleteChar(string, n){
     return string.slice(0, n) + string.slice(n + 1);
+}
+
+
+function clamp(num, min, max) {
+  return num <= min ? min : num >= max ? max : num;
+}
+
+function smoothstep(low, high, x) {
+  // Scale, and clamp x to 0..1 range
+  x = clamp((x - low) / (high - low), 0.0, 1.0);
+  // Evaluate polynomial
+  return x * x * x * (x * (x * 6 - 15) + 10); // 6x^5 - 15x^4 + 10x^3
 }
