@@ -43,11 +43,6 @@ var labeled = false;    // aren't all trees labeled? TODO: figure out why this i
 
 function retrieveStoredTree(num){
 
-    // branchings = treeStories[num]; // would be better if what we retrieved was the rule, and we recreated the Lsystem
-
-    // rules[0].b = treeStories[num];
-    // resetLSystems();
-
     // it's ok to set these both as the same seed, since they affect vastly different things
     // make sure to set the seeds first!!
     randomSeed(randSeeds[num]);

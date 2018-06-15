@@ -44,8 +44,11 @@ function textToRule(words){
     newRule += semanticRules(words);
     newRule += charCountRules(words);
     newRule += charValuesRules(words);
+
+    // Do an initial cleanup of the result from above, then start fixing it if it isn't robust enough
     newRule = cleanUp(newRule);
 
+    // Shorten the string if it's too long
     var L = allowedCharLength(words);
     var n = round(random(1, 5));
     while (newRule.length > L){
@@ -54,6 +57,12 @@ function textToRule(words){
 
         if (n == 0) n = round(random(1, 5));
     }
+
+    // Ensure there are brackets if there aren't already
+    newRule = ensureBrackets(newRule);
+
+    // Ensure there are rotation characters present, and if not add them in.
+    newRule = ensureRotation(newRule);
 
     newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
     newRule = addSpaces(newRule); // this is just so the strings can print in the background
@@ -112,19 +121,28 @@ function setTreeParameters(){
     var analysis = stringAnalysis(branchings);
     var levels = deepestLevel(branchings);
 
-    if      (levels < 3)  branchDepthFactor = 3.5;
-    else if (levels < 10) branchDepthFactor = map(levels, 3, 10, 3, 1.4);
-    else if (levels < 30) branchDepthFactor = map(levels, 10, 30, 1.4, 1.1);
-    else                  branchDepthFactor = 1.05;
+    if      (levels < 3)  branchDepthFactor = height / 143;
+    else if (levels < 10) branchDepthFactor = map(levels, 3, 10, height/166.66, height/357);
+    else if (levels < 30) branchDepthFactor = map(levels, 10, 30, height/357, height/454.5);
+    else                  branchDepthFactor = height/476.2;
 
-    var baseLength = setLen(max(analysis["F"]));
+    var baseLength = setLen(max(analysis["n"]));
 
-    len = random(0.8*baseLength, 1.3*baseLength);
+    len = random(0.8*baseLength, 1.2*baseLength);
+
+    var maxrotation = analysis["rot"].reduce( (max, item) => Math.max(abs(max), abs(item)) ); // find the absolute max
+
+    setAngle(maxrotation);
 }
 
 // redo this to include rotation also (i.e. effective length).
 function setLen(n_Fs){
-    return len = 0.9 * height/(2*n_Fs);
+    return len = 0.95 * height/(2*n_Fs);
+}
+
+function setAngle(rot){
+
+    angle = radians(35 / rot); // max rotation is not enough. Must be weighted by distance
 }
 
 
