@@ -77,6 +77,7 @@ var rootDepthFactor = 3;
 var treeLoc = 0.7; // as a fraction of the canvas height
 var trunkCol, woodCol, rootCol;
 var drawRoots = true;
+var fullGrowth = false;
 
 var lookingAt = 0;
 
@@ -156,8 +157,8 @@ function draw(){
     /////// draw the tree
     // update values:
     updateWind();
-    // increment_char();
-    fullGrowth(); // temporary so we can see the full tree for rule developement
+    if (fullGrowth) maxCharCount(); // temporary so we can see the full tree for rule developement
+    else            increment_char();
 
     resetMatrix();
     translate(width/2, treeLoc*height);
@@ -282,7 +283,7 @@ function resetCharCount(){
     root_n = 0;
 }
 
-function fullGrowth(){
+function maxCharCount(){
     char_n = branchings.length - 1;
     root_n = roots.length - 1;
 }
