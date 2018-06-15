@@ -126,14 +126,23 @@ function setTreeParameters(){
     else if (levels < 30) branchDepthFactor = map(levels, 10, 30, 1.4, 1.1);
     else                  branchDepthFactor = 1.05;
 
-    var baseLength = setLen(max(analysis["F"]));
+    var baseLength = setLen(max(analysis["n"]));
 
-    len = random(0.8*baseLength, 1.3*baseLength);
+    len = random(0.8*baseLength, 1.2*baseLength);
+
+    var maxrotation = analysis["rot"].reduce( (max, item) => Math.max(abs(max), abs(item)) ); // find the absolute max
+
+    setAngle(maxrotation);
 }
 
 // redo this to include rotation also (i.e. effective length).
 function setLen(n_Fs){
     return len = 0.95 * height/(2*n_Fs);
+}
+
+function setAngle(rot){
+
+    angle = radians(35 / rot); // max rotation is not enough. Must be weighted by distance
 }
 
 

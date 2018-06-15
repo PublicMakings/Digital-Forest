@@ -364,9 +364,9 @@ function ensureRotation(string){
     analysis = stringAnalysis(string);
 
     var rotation = false;
-    for (let i = 0; i < analysis["+"].length; i++){
+    for (let i = 0; i < analysis["rot"].length; i++){
 
-        if (analysis["+"][i] > 0 || analysis["-"][i] > 0)
+        if (analysis["rot"][i] > 0)
             rotation = true;
     }
 
@@ -393,40 +393,86 @@ function addRandomRotation(string){
 
 
 // counts rotations and Fs at each bracket level
+// function stringAnalysis(string){
+
+//     // consectives here refers to how many of these characters are encounted up to that point in the string.
+//     // only close brackets revert the count
+
+//     var consecutives = {"F": [],    "+": [],    "-": []}
+//     var count        = {"F": 0,     "+": 0,     "-": 0}
+//     var temp         = {"F": [0],   "+": [0],   "-": [0]}
+
+//     var letter;
+//     for (let n = 0; n < string.length; n++){
+
+//         letter = string.charAt(n);
+
+//         // remember how many consecutives there were at this point.
+//         if (letter == "["){
+
+//             for (var key in consecutives){
+//                 temp[key].push(count[key]);
+//             }
+//         }
+//         // store how many consecutives there have been and return to the previous layer's amount.
+//         else if (letter == "]"){
+
+//             for (var key in consecutives){
+//                 consecutives[key].push(count[key]);
+//                 count[key] = temp[key].pop();
+//             }
+//         }
+//         // increment the count of whichever one
+//         else if (letter == "F") count["F"] += 1;
+//         else if (letter == "+") count["+"] += 1;
+//         else if (letter == "-") count["-"] += 1;
+//         else if (letter == "G") count["-"] += 1/GminusRatio;
+
+//     }
+
+//     return consecutives;
+// }
+
+
+// With each F, record how many consecutive F's there have been and its overall rotation
+// I need to know the position of each F, its overall rotation, and how many came before it
 function stringAnalysis(string){
 
-    // consectives here refers to how many of these characters are encounted up to that point in the string.
-    // only close brackets revert the count
-
-    var consecutives = {"F": [],    "+": [],    "-": []}
-    var count        = {"F": 0,     "+": 0,     "-": 0}
-    var temp         = {"F": [0],   "+": [0],   "-": [0]}
+    var consecutives = {"rot": [], "pos": [],   "n": []}
+    var count        = {"rot": 0,   "n": 0}
+    var temp         = {"rot": [0], "n": [0]}
 
     var letter;
-    for (let n = 0; n < string.length; n++){
+    for (let i = 0; i < string.length; i++){
 
-        letter = string.charAt(n);
+        letter = string.charAt(i);
 
-        // remember how many consecutives there were at this point.
         if (letter == "["){
 
-            for (var key in consecutives){
+            for (var key in temp)
                 temp[key].push(count[key]);
-            }
+
         }
-        // store how many consecutives there have been and return to the previous layer's amount.
         else if (letter == "]"){
 
-            for (var key in consecutives){
-                consecutives[key].push(count[key]);
+            for (var key in temp)
                 count[key] = temp[key].pop();
-            }
+
         }
-        // increment the count of whichever one
-        else if (letter == "F") count["F"] += 1;
-        else if (letter == "+") count["+"] += 1;
-        else if (letter == "-") count["-"] += 1;
-        else if (letter == "G") count["-"] += 1/GminusRatio;
+
+        else if (letter == "F"){
+
+            consecutives["pos"].push(i);
+            consecutives["rot"].push(count["rot"]);
+            consecutives["n"].push(count["n"]);
+
+            count["n"] += 1;
+
+        }
+
+        else if (letter == "+") count["rot"] += 1;
+        else if (letter == "-") count["rot"] -= 1;
+        else if (letter == "G") count["rot"] -= 1/GminusRatio;
 
     }
 
