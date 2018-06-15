@@ -121,10 +121,10 @@ function setTreeParameters(){
     var analysis = stringAnalysis(branchings);
     var levels = deepestLevel(branchings);
 
-    if      (levels < 3)  branchDepthFactor = 3.5;
-    else if (levels < 10) branchDepthFactor = map(levels, 3, 10, 3, 1.4);
-    else if (levels < 30) branchDepthFactor = map(levels, 10, 30, 1.4, 1.1);
-    else                  branchDepthFactor = 1.05;
+    if      (levels < 3)  branchDepthFactor = height / 143;
+    else if (levels < 10) branchDepthFactor = map(levels, 3, 10, height/166.66, height/357);
+    else if (levels < 30) branchDepthFactor = map(levels, 10, 30, height/357, height/454.5);
+    else                  branchDepthFactor = height/476.2;
 
     var baseLength = setLen(max(analysis["n"]));
 
