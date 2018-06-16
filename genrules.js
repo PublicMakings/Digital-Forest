@@ -1,4 +1,48 @@
 
+
+
+/////// *THE* function that puts it all together ///////
+
+function textToRule(words){
+
+    var newRule = "";
+
+    newRule += wordCountRules(words);
+    newRule += semanticRules(words);
+    newRule += charCountRules(words);
+    newRule += charValuesRules(words);
+
+    // Do an initial cleanup of the result from above, then start fixing it if it isn't robust enough
+    newRule = cleanUp(newRule);
+
+    // Shorten the string if it's too long
+    var L = allowedCharLength(words);
+    var n = round(random(1, 5));
+    while (newRule.length > L){
+
+        [newRule, n] = hoppingTruncate(newRule, n);
+
+        if (n == 0) n = round(random(1, 5));
+    }
+
+    // Ensure there are brackets if there aren't already
+    newRule = ensureBrackets(newRule);
+
+    // Ensure there are rotation characters present, and if not add them in.
+    newRule = ensureRotation(newRule);
+
+    newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
+    newRule = addSpaces(newRule); // this is just so the strings can print in the background
+
+    return newRule;
+}
+
+
+
+
+
+
+
 var languageForest = {
         tree: "[FF]",
         trees: "[F-F+]",
@@ -35,7 +79,9 @@ var lengthBasedRules = {
     };
 
 
+/////// RULES (additive) ///////
 
+// Uses languageForest
 function semanticRules(words){
 
     var string = "";
@@ -51,6 +97,7 @@ function semanticRules(words){
     return string;
 }
 
+// Uses lengthBasedRules
 function wordCountRules(words){
 
     var string = "";
@@ -69,40 +116,22 @@ function wordCountRules(words){
 
 function charCountRules(words){
     var string = "";
-    var word;
-    var which;
-    for (var n = 0; n < words.length; n++){
-
-        word = words[n];
-        which = word.length % 6
-
-        if      (which == 0) string += "F"
-        else if (which == 1) string += "G"
-        else if (which == 2) string += "+"
-        else if (which == 3) string += "-"
-        else if (which == 4) string += "["
-        else if (which == 5) string += "]"
-    }
+    for (var n = 0; n < words.length; n++)
+        string += getChar(words[n].length);
 
     return string;
 }
 
+// Currently this goes through each character.
+// Instead, considering first summing the characters of a word.
 function charValuesRules(words){
     var string = "";
-    var which, letter;
     var ASCIIchar;
     for (var n = 0; n < words.length; n++){
         for (var m = 0; m < words[n].length; m++){
-            letter = words[n].charAt(m).charCodeAt();
+            ASCIIchar = words[n].charAt(m).charCodeAt();
 
-            which = letter % 6;
-
-            if      (which == 0) string += "F"
-            else if (which == 1) string += "G"
-            else if (which == 2) string += "+"
-            else if (which == 3) string += "-"
-            else if (which == 4) string += "["
-            else if (which == 5) string += "]"
+            string += getChar(ASCIIchar);
         }
     }
 
@@ -110,8 +139,12 @@ function charValuesRules(words){
 }
 
 
+/////// RULES (subtractive) ///////
 
 function cleanUp(string){
+
+    // order of operations:
+    // close brackets |> remove excess rotations <|> remove repeat rotations |> remove empty brackets
 
     string = removeUnpairedBrackets(string);
     string = GsToMinus(string);
@@ -120,26 +153,6 @@ function cleanUp(string){
     string = removeEmptyBrackets(string);
 
     return string;
-}
-
-// CLEANUP FUNCTIONS:
-
-// order of operations:
-// close brackets |> remove excess rotations <|> remove repeat rotations |> remove empty brackets
-
-function countOpenBrackets(string){
-
-    var left = 0, right = 0;
-    var letter;
-
-    for (let n = 0; n < string.length; n++){
-        letter = string.charAt(n);
-
-        if (letter == "[") left += 1;
-        if (letter == "]") right += 1;
-    }
-
-    return (left - right);
 }
 
 // fix bracket hygiene. self explanatory.
@@ -155,32 +168,17 @@ function removeUnpairedBrackets(string){
         if      (letter == "[") left.push(n);
         else if (letter == "]") right.push(n);
 
-        if (left.length > right.length){
+        if (left.length > right.length)
             string = deleteChar(string,  left.pop());
-        }
+
     }
 
     var dif = right.length - left.length;
 
     for (var n = 0; n < dif; n++){ // effectively works as an if condition for right > left
         string = deleteChar(string, right.pop());
-        right = right.map( i => i-1 );
+        right = right.map( i => i-1 );  //once you've deleted, lower all the indices accordingly
 
-    }
-
-    return string;
-}
-
-// no longer used (removeUnpairedBrackets is instead)
-function closeOpenBrackets(string){
-
-    var openBrackets = countOpenBrackets(string);
-
-    if (openBrackets > 0){
-        return string + Array(openBrackets + 1).join("]");
-    }
-    else if (openBrackets < 0){
-        return Array(-openBrackets + 1).join("[") + string;
     }
 
     return string;
@@ -279,19 +277,6 @@ function removeExcessRotation(string){
 }
 
 
-function hoppingTruncate(string, interval){
-
-    var loc = interval;
-
-    while (loc < string.length){
-
-        string = deleteChar(string, loc);
-        loc += interval;
-    }
-
-    return [string, loc % string.length] // return both the new string and the potential next starting spot
-}
-
 function GsToMinus(string){
 
     var loc = 0;
@@ -319,13 +304,48 @@ function GsToMinus(string){
     return string;
 }
 
+
+// no longer used (removeUnpairedBrackets is instead)
+function closeOpenBrackets(string){
+
+    var openBrackets = countOpenBrackets(string);
+
+    if (openBrackets > 0){
+        return string + Array(openBrackets + 1).join("]");
+    }
+    else if (openBrackets < 0){
+        return Array(-openBrackets + 1).join("[") + string;
+    }
+
+    return string;
+}
+
+// returns positive for too many opens and negative for to many closes
+countOpenBrackets = function(string){
+
+    var left = 0, right = 0;
+    var letter;
+
+    for (let n = 0; n < string.length; n++){
+        letter = string.charAt(n);
+
+        if (letter == "[") left += 1;
+        if (letter == "]") right += 1;
+    }
+
+    return (left - right);
+}
+
+
+/////// FUNCTIONS FOR MORE PLEASANT RULES ///////
+
 function allowedCharLength(words){
 
     var base = 8 + 40*smoothstep(1, 100, words.length);
 
-    var rando = random(-0.2*base, 0.2*base);
+    var rando = random(0.8, 1.2);
 
-    return abs(round(base + rando)) + 1; // absolute  value of 80-120% of the baseline value (+1 so that it's never 0)
+    return abs(round(base*rando)) + 1; // absolute  value of 80-120% of the baseline value (+1 so that it's never 0)
 }
 
 
@@ -343,21 +363,15 @@ function ensureBrackets(string){
         let N = round(random(1, 4));
         for (let i = 0; i < 2; i++){
 
-            var rand1 = floor(random(0, string.length - 2));
-            var rand2 = ceil(random(rand1, string.length - 1));
+            var openpos  = floor(random(0, string.length - 2));
+            var closepos = ceil(random(openpos, string.length - 1));
 
-            string = addBracketSet(string, rand1, rand2);
+            string = addBracketSet(string, openpos, closepos);
         }
     }
 
     return cleanUp(string); // cleanup in case there are broken bracket sets
 }
-
-function addBracketSet(string, open, close){
-
-    return string.slice(0, open) + "[" + string.slice(open, close) + "]" + string.slice(close);
-}
-
 
 function ensureRotation(string){
 
@@ -366,8 +380,10 @@ function ensureRotation(string){
     var rotation = false;
     for (let i = 0; i < analysis["rot"].length; i++){
 
-        if (analysis["rot"][i] > 0)
+        if (analysis["rot"][i] > 0){
             rotation = true;
+            break;
+        }
     }
 
     if (!rotation)
@@ -377,65 +393,22 @@ function ensureRotation(string){
     return string;
 }
 
-function addRandomRotation(string){
 
-    var location = floor(random(0, string.length - 2)); // rotation can't be the last character;
+function hoppingTruncate(string, interval){
 
-    var selector = random();
+    var loc = interval;
 
-    var rotation = "G";
-    if      (selector < 0.33)   rotation = "+";
-    else if (selector < 0.66)   rotation = "-";
+    while (loc < string.length){
 
-    return string.slice(0, location) + rotation + string.slice(location);
+        string = deleteChar(string, loc);
+        loc += interval;
+    }
+
+    return [string, loc % string.length] // return both the new string and a potential next starting spot
 }
 
 
-
-// counts rotations and Fs at each bracket level
-// function stringAnalysis(string){
-
-//     // consectives here refers to how many of these characters are encounted up to that point in the string.
-//     // only close brackets revert the count
-
-//     var consecutives = {"F": [],    "+": [],    "-": []}
-//     var count        = {"F": 0,     "+": 0,     "-": 0}
-//     var temp         = {"F": [0],   "+": [0],   "-": [0]}
-
-//     var letter;
-//     for (let n = 0; n < string.length; n++){
-
-//         letter = string.charAt(n);
-
-//         // remember how many consecutives there were at this point.
-//         if (letter == "["){
-
-//             for (var key in consecutives){
-//                 temp[key].push(count[key]);
-//             }
-//         }
-//         // store how many consecutives there have been and return to the previous layer's amount.
-//         else if (letter == "]"){
-
-//             for (var key in consecutives){
-//                 consecutives[key].push(count[key]);
-//                 count[key] = temp[key].pop();
-//             }
-//         }
-//         // increment the count of whichever one
-//         else if (letter == "F") count["F"] += 1;
-//         else if (letter == "+") count["+"] += 1;
-//         else if (letter == "-") count["-"] += 1;
-//         else if (letter == "G") count["-"] += 1/GminusRatio;
-
-//     }
-
-//     return consecutives;
-// }
-
-
-// With each F, record how many consecutive F's there have been and its overall rotation
-// I need to know the position of each F, its overall rotation, and how many came before it
+// With each F, record how many consecutive F's there have been thus far, the overall rotation, and the position in the string
 function stringAnalysis(string){
 
     var consecutives = {"rot": [], "pos": [],   "n": []}
@@ -480,8 +453,22 @@ function stringAnalysis(string){
 }
 
 
-// convenience functions. May not be necessary
-function isAngleCharacter(letter){
+
+////// CONVENCIENCE FUNCTIONS //////
+
+getChar = function(num){
+    num %= 6; // mod 6
+
+    if      (num == 0) return "F";
+    else if (num == 1) return "G";
+    else if (num == 2) return "+";
+    else if (num == 3) return "-";
+    else if (num == 4) return "[";
+    else if (num == 5) return "]";
+}
+
+// convenience functions.
+isAngleCharacter = function(letter){
 
     if (letter == "+") return true;
     if (letter == "-") return true;
@@ -490,31 +477,32 @@ function isAngleCharacter(letter){
     return false;
 }
 
-function isDrawingCharacter(letter){
-    return (letter == "F");
-}
-function isBracket(letter){
+isBracket          = (letter) => (letter == "[" || letter == "]") ? true : false;
+isDrawingCharacter = (letter) => (letter == "F");
 
-    if (letter == "[") return true;
-    if (letter == "]") return true;
+addBracketSet = (s, open, close) => s.slice(0, open) + "[" + s.slice(open, close) + "]" + s.slice(close);
 
-    return false;
-}
+addRandomRotation = function (str){
 
-// NOTE: 0-based indexing.
-// E,g, `deleteChar("this", 1) == "tis"`
-function deleteChar(string, n){
-    return string.slice(0, n) + string.slice(n + 1);
-}
+    var selector = random();
 
+    var rot = "G";
+    if      (selector < 0.33) rot = "+";
+    else if (selector < 0.66) rot = "-";
 
-function clamp(num, min, max) {
-  return num <= min ? min : num >= max ? max : num;
+    var loc = floor(random(0, str.length - 2)); // rotation can't be the last character;
+
+    return str.slice(0, loc) + rot + str.slice(loc);
 }
 
-function smoothstep(low, high, x) {
+// NOTE: `deleteChar("this", 1) == "tis"` because 0-based indexing
+deleteChar    = (s, n)           => s.slice(0, n) + s.slice(n + 1);
+
+clamp         = (num, min, max)  => (num <= min) ? min : (num >= max) ? max : num;
+
+smoothstep = function(low, high, x) {
   // Scale, and clamp x to 0..1 range
   x = clamp((x - low) / (high - low), 0.0, 1.0);
   // Evaluate polynomial
-  return x * x * x * (x * (x * 6 - 15) + 10); // 6x^5 - 15x^4 + 10x^3
+  return x * x * x * (x * (x * 6 - 15) + 10); // 6x^5 - 15x^4 + 10x^3 quintic spline
 }
