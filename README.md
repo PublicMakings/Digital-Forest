@@ -16,10 +16,13 @@ p5.js interactive artwork about narratives of trees.
 - [X] wait for firebase (loop/noLoop for example)
 - [ ] fix formatting for wander buttons/captions which overlap with other objects often
 - [x] add angle selection to setTreeParameters
-- [ ] generalize angle selection so it works in every case
+- [ ] generalize angle selection so it works in every case (possibly by weighting "rot" by "n" in some fashion)
 - [ ] add baseBranchWidth selection to setTreeParameters (proportional to deepestLevel)
-- [ ] speed up code: start by create storage canvas for text and for circles
+- [ ] speed up code: start by storing the rotations for each branch the first time it's drawn in an array for less pushing and popping
 - [ ] clean up code (remove debugging) + write comments + polish the code so it's beautiful
+- [ ] bundle global vairbles up into groups and make singleton classes for them
+- [ ] write sunlight shader
+- [ ] add offline creating mode just in case (right now it must go through wander())
 
 - [ ] sanitize filter
 - [x] Binary background
