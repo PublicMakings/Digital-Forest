@@ -31,7 +31,7 @@ function textToRule(words){
     // Ensure there are rotation characters present, and if not add them in.
     newRule = ensureRotation(newRule);
 
-    newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
+    newRule = "F" + newRule;      // Add an F in front since it makes things nicer in most cases.
     newRule = addSpaces(newRule); // this is just so the strings can print in the background
 
     return newRule;
@@ -353,42 +353,56 @@ function ensureBrackets(string){
 
     var count = 0;
 
-    for (let n = 0; n < string.length; n++)
-        if (string.charAt(n) == "[") count += 1;
+    // the evaluating function
+    hasBracket = function(s){
+        for (let n = 0; n < s.length; n++){
+            if (s.charAt(n) == "[")
+                return true;
+        }
+        return false;
+    }
 
-
-    if (count < 1){
+    while (!hasBracket(string)){
 
         // add N (a random number) sets of random brackets
-        let N = round(random(1, 4));
-        for (let i = 0; i < 2; i++){
+        var N = round(random(1, 4));
+        for (var i = 0; i < 2; i++){
 
             var openpos  = floor(random(0, string.length - 2));
             var closepos = ceil(random(openpos, string.length - 1));
 
             string = addBracketSet(string, openpos, closepos);
         }
+
+        string = cleanUp(string)
     }
 
-    return cleanUp(string); // cleanup in case there are broken bracket sets
+    return string; // cleanup in case there are broken bracket sets
 }
 
 function ensureRotation(string){
 
-    analysis = stringAnalysis(string);
+    // the evaluating function
+    hasRotation = function(s){
 
-    var rotation = false;
-    for (let i = 0; i < analysis["rot"].length; i++){
+        analysis = stringAnalysis(s);
+        for (let i = 0; i < analysis["rot"].length; i++){
 
-        if (analysis["rot"][i] > 0){
-            rotation = true;
-            break;
+            if (analysis["rot"][i] > 0)
+                return true
         }
+
+        return false;
     }
 
-    if (!rotation)
+
+    while (!hasRotation(string)){
+
         for (let i = 0; i < 2; i++) // add two random rotations
             string = addRandomRotation(string);
+
+        string = cleanUp(string);
+    }
 
     return string;
 }
