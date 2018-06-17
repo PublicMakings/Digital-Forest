@@ -10,7 +10,6 @@ p5.js interactive artwork about narratives of trees.
 - [x] add axiom stringto binary background
 - [x] translucent mask over introductory tree
 - [x] display text at the bottom
-<!-- - [ ] change items already stored in the database to make sure they're rules rather than full lsystems [NOTE: no longer necessary, workaround in effect in retrieveStoredTree] -->
 - [x] clicking on a mode button (wander or create) while html objects are already onscreen doubles them
 - [x] clicking on a number more than once may yield different results (rand num issue?)
 - [X] wait for firebase (loop/noLoop for example)
@@ -20,7 +19,8 @@ p5.js interactive artwork about narratives of trees.
 - [ ] add baseBranchWidth selection to setTreeParameters (proportional to deepestLevel)
 - [ ] speed up code: start by storing the rotations for each branch the first time it's drawn in an array for less pushing and popping
 - [ ] clean up code (remove debugging) + write comments + polish the code so it's beautiful
-- [ ] bundle global vairbles up into groups and make singleton classes for them
+- [ ] bundle global variables up into groups and make singleton classes for them
+- [ ] create "tree" class
 - [ ] write sunlight shader
 - [ ] add offline creating mode just in case (right now it must go through wander())
 

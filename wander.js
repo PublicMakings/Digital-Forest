@@ -3,10 +3,10 @@ var humanStories = [];
 var arboretum = [];
 var randSeeds = [];
 
-function wander(){
+var labeled = false;
 
-    if (creating)  disableCreating();
-    if (wandering) disableWandering();
+
+function wander(){
 
     //make a bunch of clicables for the trees stored in the databse
     for(var i = 0; i<keys.length; i++){
@@ -36,8 +36,6 @@ function specimens(evt){
 }
 
 
-var labeled = false;    // aren't all trees labeled? TODO: figure out why this is here
-
 function retrieveStoredTree(num){
 
     // it's ok to set these both as the same seed, since they affect vastly different things
@@ -65,8 +63,9 @@ function captionTree(text){
 
 function toggleWander(){
 
-    hasSubmitted = true;
     intro.remove()
+    if (creating)  disableCreating();
+    if (wandering) disableWandering();
 
     wander();
     retrieveStoredTree(lookingAt); // display the first tree
@@ -108,16 +107,23 @@ function setTreeParameters(){
     var levels = deepestLevel(branchings);
 
     var baseLength = setLen(max(analysis["n"]));
-    var maxrotation = analysis["rot"].reduce( (max, item) => Math.max(abs(max), abs(item)) ); // find the absolute max
+
+    // function for finding the index of the absolute max
+    IndOfAbsMax = (iMax, x, i, arr) => abs(x) > abs(arr[iMax]) ? i : iMax;
+
+    var i = analysis["rot"].reduce(IndOfAbsMax);
+
+    var maxRot        = abs(analysis["rot"][i]),
+        depthOfMaxRot = analysis["n"][i]
 
     branchDepthFactor = setBranchDepthFactor(levels);
     len = random(0.8*baseLength, 1.2*baseLength);
-    angle = setAngle(maxrotation);
+    angle = setAngle(maxRot * pow(0.995,depthOfMaxRot));
 }
 
 
 setLen   = (n_Fs) => 0.95 * height/(2*n_Fs); // redo this to include rotation also (i.e. effective length).
-setAngle = (rot)  => radians(35 / rot); // max rotation is not enough. Must be weighted by distance
+setAngle = (rot)  => radians(60 / rot); // max rotation is not enough. Must be weighted by distance
 setBranchDepthFactor = function(levels){
     // weird numbers here are all magic constants. They "just work" in nearly every case
     if      (levels < 3)  return height / 143;

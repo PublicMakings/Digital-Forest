@@ -1,6 +1,5 @@
 //Based on the L-System implementation by Daniel Shiffman
 
-//AO Global variables
 var instructions = ['Welcome.',
 
                     'This Arboretum is a reflection about how we, as humans, tell stories about our relationship to trees.'
@@ -40,9 +39,9 @@ var seedTxt = [];
 var response = '';
 var button;
 
-// Keep list of DOM elements for clearing later when reloading
-var listItems = [];
 var database;
+var keys, lSystem;
+
 var clicks = 0;
 var creating = false;
 var wandering = false;
@@ -418,7 +417,6 @@ function loadFirebase() {
 }
 
 // The data comes back as an object
-var keys, lSystem;
 function gotData(data) {
 
     lSystem = data.val();

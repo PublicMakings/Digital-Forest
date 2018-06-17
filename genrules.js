@@ -17,13 +17,7 @@ function textToRule(words){
 
     // Shorten the string if it's too long
     var L = allowedCharLength(words);
-    var n = round(random(1, 5));
-    while (newRule.length > L){
-
-        [newRule, n] = hoppingTruncate(newRule, n);
-
-        if (n == 0) n = round(random(1, 5));
-    }
+    newRule = limitLength(newRule, L);
 
     // Ensure there are brackets if there aren't already
     newRule = ensureBrackets(newRule);
@@ -36,9 +30,6 @@ function textToRule(words){
 
     return newRule;
 }
-
-
-
 
 
 
@@ -366,7 +357,7 @@ function ensureBrackets(string){
 
         // add N (a random number) sets of random brackets
         var N = round(random(1, 4));
-        for (var i = 0; i < 2; i++){
+        for (var i = 0; i < N; i++){
 
             var openpos  = floor(random(0, string.length - 2));
             var closepos = ceil(random(openpos, string.length - 1));
@@ -384,21 +375,19 @@ function ensureRotation(string){
 
     // the evaluating function
     hasRotation = function(s){
-
-        analysis = stringAnalysis(s);
-        for (let i = 0; i < analysis["rot"].length; i++){
-
-            if (analysis["rot"][i] > 0)
+        for (let n = 0; n < s.length; n++){
+            if ( isAngleCharacter(s.charAt(n)) )
                 return true
         }
-
         return false;
     }
 
 
     while (!hasRotation(string)){
 
-        for (let i = 0; i < 2; i++) // add two random rotations
+        // add N (a random number) sets of random rotation
+        var N = round(random(1, 4));
+        for (var i = 0; i < N; i++)
             string = addRandomRotation(string);
 
         string = cleanUp(string);
@@ -407,6 +396,17 @@ function ensureRotation(string){
     return string;
 }
 
+function limitLength(string, L){
+
+    var n = round(random(1, 5));
+    while (string.length > L){
+
+        [string, n] = hoppingTruncate(string, n);
+
+        if (n == 0) n = round(random(1, 5));
+    }
+    return cleanUp(string)
+}
 
 function hoppingTruncate(string, interval){
 
@@ -432,35 +432,42 @@ function stringAnalysis(string){
     var letter;
     for (let i = 0; i < string.length; i++){
 
-        letter = string.charAt(i);
+        switch(string.charAt(i))
+        {
+            case "[":
 
-        if (letter == "["){
+                for (var key in temp)
+                    temp[key].push(count[key]);
 
-            for (var key in temp)
-                temp[key].push(count[key]);
+                break;
 
+            case "]":
+
+                for (var key in temp)
+                  count[key] = temp[key].pop();
+
+                break;
+
+            case "F":
+
+                consecutives["pos"].push(i);
+                consecutives["rot"].push(count["rot"]);
+                consecutives["n"].push(count["n"]);
+
+                count["n"] += 1;
+
+                break;
+
+
+            case "+":
+                count["rot"] += 1;
+                break;
+            case "-":
+                count["rot"] -= 1;
+                break;
+            case "G":
+                count["rot"] -= 1/GminusRatio;
         }
-        else if (letter == "]"){
-
-            for (var key in temp)
-                count[key] = temp[key].pop();
-
-        }
-
-        else if (letter == "F"){
-
-            consecutives["pos"].push(i);
-            consecutives["rot"].push(count["rot"]);
-            consecutives["n"].push(count["n"]);
-
-            count["n"] += 1;
-
-        }
-
-        else if (letter == "+") count["rot"] += 1;
-        else if (letter == "-") count["rot"] -= 1;
-        else if (letter == "G") count["rot"] -= 1/GminusRatio;
-
     }
 
     return consecutives;
