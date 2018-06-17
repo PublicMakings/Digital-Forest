@@ -127,7 +127,7 @@ function draw(){
     flickeringBackground();
 
     // if the user has submitted, draw their binary/string background
-    if (hasSubmitted) {
+    if (wandering) {
 
         textFont('Georgia', 15);
         strokeWeight(.5);
@@ -160,7 +160,7 @@ function draw(){
     sproutBranches(1, len, char_n, branchings, 2, woodCol);
     if (drawRoots) hyphae();
 
-    if (!creating && !wandering){
+    if (!wandering){
         fill(255, 160);
         noStroke();
         rect(0, 0, width, height);
@@ -173,11 +173,9 @@ function growthRing(){
     clearCanvas();
 
     frameRate(100);
-    angle = radians(17);
 
     resetLSystems();
     setTreeParameters();
-    // print(branchings);
 
     woodCol  = color(105, 100, 60, 100);
     trunkCol = color(115, 100, 60, 220);
@@ -225,10 +223,8 @@ maxCharCount = function(){
     root_n = roots.length - 1;
 }
 
+clearCanvas = () =>  createCanvas(500, 500);
 
-function clearCanvas(){
-    var canvas = createCanvas(500, 500);
-}
 
 function CircleMask(factor){
 
@@ -403,7 +399,7 @@ function mousePressed(){
 
     sunlight = true;
 
-    if (!hasSubmitted && creating){
+    if (creating){
 
         incrementCreating();
     }
