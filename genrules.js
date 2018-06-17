@@ -506,3 +506,28 @@ smoothstep = function(low, high, x) {
   // Evaluate polynomial
   return x * x * x * (x * (x * 6 - 15) + 10); // 6x^5 - 15x^4 + 10x^3 quintic spline
 }
+
+// add spaces around brackets to allow text wrapping for the background
+addSpaces = function(nospace){
+
+    var letter, next;
+    var string = "";
+
+    for (var n = 0; n < nospace.length - 1; n++){
+
+        letter = nospace.charAt(n);
+        next   = nospace.charAt(n + 1);
+
+        if  (!isBracket(next)){
+
+            if      (letter == "[") letter = " " + letter;
+            else if (letter == "]") letter += " ";
+        }
+
+        string += letter;
+    }
+
+    string += nospace[nospace.length - 1];
+
+    return string;
+}

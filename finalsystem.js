@@ -49,10 +49,6 @@ var wandering = false;
 
 var sunlight = false;
 
-// F string background -- fix
-// add if condition on submission to disallow empty responses
-// organize all globals to live up here, or preferably bundle them up into groups and make singleton classes for them
-// write sunlight shader.
 
 // TREE THINGS
 
@@ -117,7 +113,6 @@ function setup() {
                                               .style('margin','0')
                                               .style('color', 'rgba(135, 180, 130, 0.3)');
 
-    // wanderbutton.mousePressed(toggleWander); // DONT SET THIS UNTIL DATA COMES BACK FROM SERVER
     treebutton.mousePressed(toggleCreate);
 
     growthRing();
@@ -129,7 +124,7 @@ function draw(){
     clearCanvas();
     resetMatrix();
 
-    introduction();
+    flickeringBackground();
 
     // if the user has submitted, draw their binary/string background
     if (hasSubmitted) {
@@ -165,7 +160,7 @@ function draw(){
     sproutBranches(1, len, char_n, branchings, 2, woodCol);
     if (drawRoots) hyphae();
 
-    if (!hasSubmitted){
+    if (!creating && !wandering){
         fill(255, 160);
         noStroke();
         rect(0, 0, width, height);
@@ -192,50 +187,10 @@ function growthRing(){
     randomSeed(42);
 }
 
-// the two modes
-function toggleWander(){
 
-    hasSubmitted = true;
-    intro.remove();
-    if (creating) disableCreating();
-
-    wander();
-    retrieveStoredTree(lookingAt); // display the first tree
-
-    wanderbutton.parent('navigation');
-    treebutton.parent('navigation');
-}
-function toggleCreate(){
-
-    if (wandering) disableWandering();
-    if (creating) {
-        clicks = 0;
-        return;
-    }
-
-    hasSubmitted = false;
-    creating = true;
-    clicks = 0
-
-    back = createP('back').id('choices')
-                          .style('display','inline-flex')
-                          .style('margin','0');
-
-    next = createP('next').id('choices')
-                          .style('display','inline-flex')
-                          .style('margin','0');
-
-    back.mousePressed( () => clicks -= 1 );
-    next.mousePressed( () => clicks += 1 );
-
-    wanderbutton.parent('navigation');
-    treebutton.parent('navigation');
-}
-
-function introduction(){
+function flickeringBackground(){
 
     background(255);
-    frameRate(20);
     background(60, 255/noise(frameCount%8), 20, 10);
 
     if(sunlight){
@@ -250,40 +205,22 @@ function introduction(){
     }
 }
 
-// debugging function. TODO: remember to disable for final
-function keyReleased(){
-
-    if (keyCode === UP_ARROW){
-        maxDepth += 1;
-        resetLSystems();
-    }
-    else if (keyCode === DOWN_ARROW){
-        maxDepth -= 1;
-        resetLSystems();
-    }
-}
 
 
 
-
-
-
-
-function updateWind(){
+updateWind = function(){
     windFactor = 1 + sin(d)/70;
     d += noise(d)/8;
 }
-
-function increment_char(){
+increment_char = function(){
     if (char_n < branchings.length) char_n += 1;
     if (root_n < roots.length)      root_n += 1;
 }
-function resetCharCount(){
+resetCharCount = function(){
     char_n = 0;
     root_n = 0;
 }
-
-function maxCharCount(){
+maxCharCount = function(){
     char_n = branchings.length - 1;
     root_n = roots.length - 1;
 }
@@ -326,7 +263,7 @@ function darkenEdges(sizefactor, iters, opac, sw, col){
     strokeWeight(sw);
 
     var subs = opac/iters;
-    for (let i = 0; i < iters; i ++){
+    for (let i = 0; i < iters; i++){
 
         stroke(col, opac);
         ellipse(width/2, height/2, rx, ry);
@@ -342,14 +279,15 @@ function darkenEdges(sizefactor, iters, opac, sw, col){
 function resetLSystems(){
     // creates the lsystem strings for the global `branchings` and `roots`
     branchings = axiom;
-    for (var i = 0; i < maxDepth; i++){
-        branchings = generate(branchings);
-    }
+    roots      = axiom;
 
-    roots = axiom;
     for (var i = 0; i < maxDepth -1; i++){
+        branchings = generate(branchings);
         roots = generate(roots);
     }
+
+    //give branchings one more dose
+    branchings = generate(branchings);
 
     resetCharCount();
 }
@@ -379,12 +317,8 @@ function generate(sentence){
 
 
 // convenience application of the `rhizome` function
-function sproutRoots(){
-    rhizome(-1, len, root_n, roots,      rootDepthFactor,   rootCol);
-}
-function sproutBranches(){
-    rhizome( 1, len, char_n, branchings, branchDepthFactor, woodCol);
-}
+sproutRoots     = () => rhizome(-1, len, root_n, roots,      rootDepthFactor,   rootCol);
+sproutBranches  = () => rhizome( 1, len, char_n, branchings, branchDepthFactor, woodCol);
 
 function rhizome(gravity,       // grows up (1) or down (-1)
                  branchLength,  // length of a standard branch
@@ -462,11 +396,6 @@ function growthRules(letter, branchLength, depthFactor, gravity){
 }
 
 
-// for debugging
-function toggleRoots(){ drawRoots = !drawRoots; }
-
-
-//AO sketch
 
 
 
@@ -476,67 +405,19 @@ function mousePressed(){
 
     if (!hasSubmitted && creating){
 
-        if (clicks < instructions.length){
-            intro.remove();
-            intro = createP(instructions[clicks]).id('body');
-        }
-
-
-        if(clicks == instructions.length){
-
-            clicks += 1;
-
-            intro.remove();
-            promptQuestions();
-            createElement('br') //newline
-            button = createButton('submit');
-            button.mousePressed(saveText);
-            back.remove(); // back button no longer allowed
-            next.remove(); // next button no longer allowed
-        }
+        incrementCreating();
     }
 }
 
-function promptQuestions(){
-
-    for(var i = 0; i < questions.length;i++){
-        titles[i] = createP(questions[i][0]).id('instructions');
-        seedTxt[i] = createElement('textarea', questions[i][1]).id('corpora');
-        seedTxt[i].mousePressed(cleartxt);
-    }
-}
-function cleartxt(){
-    for(var i = 0; i < seedTxt.length; i++){
-        seedTxt[i].html('');
-    }
-}
-
-function disableCreating(){
-
-    if (!creating)
-        return;
 
 
-    intro.remove();
-    next.remove();
-    back.remove();
-    if (button != undefined) button.remove();
-
-    for(var i = 0; i < seedTxt.length; i++){
-        titles[i].remove();
-        seedTxt[i].remove();
-    }
-
-    creating = false;
-}
-
-
+///// FIREBASE related
 
 function loadFirebase() {
     var ref = database.ref("patterns");
     //ping when there is new data.
 
-    ref.once("value", allowWander, errData);
+    ref.once("value", enableWander, errData);
     ref.on("value", gotData, errData);
 }
 
@@ -552,11 +433,29 @@ function gotData(data) {
     console.log(data);
 }
 
-function allowWander(){
+// sends data to firebase
+function sendData(response) {
+    var trees = database.ref('patterns');
 
-    wanderbutton.mousePressed(toggleWander);
-    wanderbutton.style('color', treebutton.style("color"));
+    var pattern = patterning(response);
 
+    var tree = trees.push(pattern, finished);
+    console.log("imagined tree" + tree.key);
+}
+
+function patterning(humantext){
+
+    var pattern = {
+        // don't change these parameters without letting AO know, the firebase server will need some security rules changed
+        tree:   textToRule(humantext),
+        human:  humantext,
+        seed:   random(60),
+        fork1:  random(8, 17),
+//        fork2:random(pattern.fork1-1,patern.fork1+3,),
+        length: random(height/random(8, 14))
+    }
+
+    return pattern;
 }
 
 ////////////////////
@@ -581,7 +480,7 @@ function errData(error) {
 
 
 
-// debugging function
+// debugging functions
 
 function showValues(){
 
@@ -591,36 +490,19 @@ function showValues(){
     }
 }
 
-// temporary data-altering function:
+function keyReleased(){
 
-function fixValues(){
-
-    var trees = database.ref("patterns");
-
-    var updates = {};
-    for (let i = 0; i < keys.length; i++){
-
-        var k = keys[i];
-        var txt = lSystem[k].human
-
-        updates[k] = patterning(txt);
+    if (keyCode === UP_ARROW){
+        maxDepth += 1;
+        resetLSystems();
     }
-
-    trees.update(updates);
+    else if (keyCode === DOWN_ARROW){
+        maxDepth -= 1;
+        resetLSystems();
+    }
 }
 
-function swapValue(num){
+toggleRoots = () => drawRoots = !drawRoots;
 
-    var trees = database.ref("patterns");
-    var k = keys[num];
-    var txt = lSystem[k].human;
-    var pattern = patterning(txt);
 
-    trees.child(k).remove( function(error){
 
-        if (error)
-            print(error)
-        else
-            sendData(txt)
-    });
-}

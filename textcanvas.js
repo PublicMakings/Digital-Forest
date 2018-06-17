@@ -16,154 +16,143 @@ function forestStory(txt){
 
     hasSubmitted = true;
 
-    caption = createElement('p1',txt).id('caption').parent('captions');
-    labeled = true;
-
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
 
     var newRule = textToRule(words);
 
     rules[0].b = newRule;
-
-    // resetLSystems();
-    // setTreeParameters();
-
-    print(textToBin(txt));
-    print("new rule: F -> ", newRule);
-    print(branchings);
-    print(txt);
 }
 
 
-function textToRule(words){
-
-    var newRule = "";
-
-    newRule += wordCountRules(words);
-    newRule += semanticRules(words);
-    newRule += charCountRules(words);
-    newRule += charValuesRules(words);
-
-    // Do an initial cleanup of the result from above, then start fixing it if it isn't robust enough
-    newRule = cleanUp(newRule);
-
-    // Shorten the string if it's too long
-    var L = allowedCharLength(words);
-    var n = round(random(1, 5));
-    while (newRule.length > L){
-
-        [newRule, n] = hoppingTruncate(newRule, n);
-
-        if (n == 0) n = round(random(1, 5));
+function incrementCreating(){
+    // increment instruction text
+    if (clicks < instructions.length){
+        intro.remove();
+        intro = createP(instructions[clicks]).id('body');
     }
 
-    // Ensure there are brackets if there aren't already
-    newRule = ensureBrackets(newRule);
+    // Place questions/response boxes
+    // place submit button
+    // remove next/back buttons
+    if(clicks == instructions.length){
 
-    // Ensure there are rotation characters present, and if not add them in.
-    newRule = ensureRotation(newRule);
+        clicks += 1;
 
-    newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
-    newRule = addSpaces(newRule); // this is just so the strings can print in the background
-
-    return newRule;
+        intro.remove();
+        promptQuestions();
+        createElement('br') //newline
+        button = createButton('submit');
+        button.mousePressed(saveText);
+        back.remove();
+        next.remove();
+    }
 }
 
 
-function textToBin(text) {
+function promptQuestions(){
+
+    for(var i = 0; i < questions.length;i++){
+        titles[i] = createP(questions[i][0]).id('instructions');
+        seedTxt[i] = createElement('textarea', questions[i][1]).id('corpora');
+        seedTxt[i].mousePressed( cleartxt(seedTxt[i]) );
+    }
+}
+
+// function that returns a function
+cleartxt = (box) =>  () => box.value('');
+
+
+function toggleCreate(){
+
+    if (wandering) disableWandering();
+    if (creating) {
+        clicks = 0;
+        return;
+    }
+
+    hasSubmitted = false;
+    creating = true;
+    clicks = 0
+
+    back = createP('back').id('choices')
+                          .style('display','inline-flex')
+                          .style('margin','0');
+
+    next = createP('next').id('choices')
+                          .style('display','inline-flex')
+                          .style('margin','0');
+
+    back.mousePressed( () => clicks -= 1 );
+    next.mousePressed( () => clicks += 1 );
+
+    wanderbutton.parent('navigation');
+    treebutton.parent('navigation');
+}
+
+function disableCreating(){
+
+    // If it's off do nothing
+    if (!creating)
+        return;
+
+
+    intro.remove();
+    next.remove();
+    back.remove();
+    if (button != undefined) button.remove();
+
+    for(var i = 0; i < seedTxt.length; i++){
+        titles[i].remove();
+        seedTxt[i].remove();
+    }
+
+    creating = false;
+}
+
+
+function saveText(){
+
+    // if the textbox is empty or if it is the same as the prompt
+    // question (i.e. hasn't been addressed at all), return
+    for(var i = 0; i < seedTxt.length; i++){
+
+        sdtxt = seedTxt[i].value();
+
+        if (sdtxt.length == 0 ||
+            sdtxt == questions[i][1] ||
+            sdtxt == 'please type something')
+        {
+            seedTxt[i].value('please type something');
+
+            return; // do nothing else
+        }
+    }
+
+
+
+    for(var i = 0; i < seedTxt.length; i++){
+        response = response.concat(seedTxt[i].value(), ' ');
+        print(response);
+        seedTxt[i].remove();
+    }
+
+    forestStory(response);  // this creates the tree from the user text reponse
+    sendData(response);     // send the tree to the database
+
+    lookingAt = keys.length -1
+    togglewander();           // wander() disables creating mode
+
+}
+
+
+textToBin = function(text) {
   var length = text.length,
       output = [];
-  for (var i = 0;i < length; i++) {
+  for (var i = 0; i < length; i++) {
     var bin = text[i].charCodeAt().toString(2);
     var leftPadding = 8-bin.length+1
     output.push(Array(leftPadding).join("0") + bin);
   }
   return output.join(" ");
 }
-
-
-// add spaces around brackets to allow text wrapping for the background
-function addSpaces(text){
-
-    var letter, next;
-    var string = "";
-
-    for (var n = 0; n < text.length - 1; n++){
-
-        letter = text.charAt(n);
-        next = text.charAt(n + 1);
-
-        if  (!isBracket(next)){
-
-            if      (letter == "[") letter = " " + letter;
-            else if (letter == "]") letter += " ";
-        }
-
-        string += letter;
-    }
-
-    string += text[text.length - 1];
-
-    return string;
-}
-
-
-//= ideally, this function will set all the parameters necessary to draw the tree correctly including:
-// - branch length,
-// - angle
-// - trunk thickness
-// - depth-associated branch width factor
-// using only the brachings string (or the rule) as a guide.
-
-function setTreeParameters(){
-
-    var analysis = stringAnalysis(branchings);
-    var levels = deepestLevel(branchings);
-
-    if      (levels < 3)  branchDepthFactor = height / 143;
-    else if (levels < 10) branchDepthFactor = map(levels, 3, 10, height/166.66, height/357);
-    else if (levels < 30) branchDepthFactor = map(levels, 10, 30, height/357, height/454.5);
-    else                  branchDepthFactor = height/476.2;
-
-    var baseLength = setLen(max(analysis["n"]));
-
-    len = random(0.8*baseLength, 1.2*baseLength);
-
-    var maxrotation = analysis["rot"].reduce( (max, item) => Math.max(abs(max), abs(item)) ); // find the absolute max
-
-    setAngle(maxrotation);
-}
-
-// redo this to include rotation also (i.e. effective length).
-function setLen(n_Fs){
-    return len = 0.95 * height/(2*n_Fs);
-}
-
-function setAngle(rot){
-
-    angle = radians(35 / rot); // max rotation is not enough. Must be weighted by distance
-}
-
-
-function deepestLevel(string){
-
-    var maxLevel = 0;
-
-    var level = 0;
-    var letter;
-    for (var n = 0; n < string.length; n++){
-        letter = string.charAt(n);
-
-        if (letter == "[") level += 1;
-        if (letter == "]") level -= 1;
-
-        if (level > maxLevel){
-            maxLevel = level;
-        }
-    }
-    return maxLevel;
-}
-
-
-
