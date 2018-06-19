@@ -15,6 +15,7 @@ var instructions = ['Welcome.',
                     'Think about times you have been in forests.'
                     ];
 
+var titles = [];
 var questions = [
                     ['Think of a specific memory in a forest.'
                       + '\nWhat do you remember about the trees?'
@@ -31,8 +32,7 @@ var questions = [
                       + '\nHow does the tree remember?'
                     ]
                 ];
-var intro;
-var titles = {};
+var intro; // where the welcome/explanation text goes
 
 // Get input from user
 var seedTxt = [];
@@ -40,40 +40,37 @@ var button;
 
 var database;
 var keys, lSystem;
+var lookingAt = 0;
 
 var clicks = 0;
 var creating = false;
 var wandering = false;
 
 var sunlight = false;
-
-
-// TREE THINGS
-
-var axiom = "F";
-var branchings = axiom; // string for branches
-var roots      = axiom; // string for roots
-var len = 8;           // length of trunk segment/s
-var trunkBranchRatio = 8
-var angle;
-var windFactor = 1;
-var d = 0;
-var char_n = 0;
-var root_n = 0;
-var GminusRatio = 10;   // ratio between 'G' rule and '-' rule.
-var maxDepth = 3;
-var baseBranchWidth = 15;
-var branchWidth;
-
-var branchDepthFactor = 3;
-var rootDepthFactor = 3;
-
-var treeLoc = 0.7; // as a fraction of the canvas height
-var trunkCol, woodCol, rootCol;
 var drawRoots = true;
 var fullGrowth = false;
 
-var lookingAt = 0;
+// TREE PARAMETERS (set for each tree by setTreeParameters in wander.js)
+var axiom = "F";
+var branchings = axiom;         // string for branches
+var roots      = axiom;         // string for roots
+var len = 8;                    // length of trunk segment/s
+var trunkBranchRatio = 8        // length ratio of trunk to branches
+var windFactor = 1;             // controls sway
+var d = 0;                      // controls windFactor
+var char_n = 0;                 // location in the branchings string
+var root_n = 0;                 // location in the roots string
+var GminusRatio = 10;           // ratio between 'G' rule and '-' rule.
+var maxDepth = 3;               // iterations of the generate() function on the axiom
+var baseBranchWidth = 15;       // width of trunk
+var branchDepthFactor = 3;      // width ratio of branches from each bracket set to the next
+var rootDepthFactor = 3;        //
+var angle;                      // rotation effect of +/-
+var branchWidth;                // container for width of current branch
+
+var treeLoc = 0.7; // as a fraction of the canvas height
+var trunkCol, woodCol, rootCol;
+
 
 var rules = [];
 rules[0] = {
