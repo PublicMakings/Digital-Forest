@@ -36,7 +36,6 @@ var titles = {};
 
 // Get input from user
 var seedTxt = [];
-var response = '';
 var button;
 
 var database;
@@ -88,13 +87,13 @@ function setup() {
 
     // Initialize Firebase
     var config = {
-        apiKey:            "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
-        authDomain:        "digital-forester.firebaseapp.com",
-        databaseURL:       "https://digital-forester.firebaseio.com",
-        projectId:         "digital-forester",
-        storageBucket:     "",
-        messagingSenderId: "966863363583"
-    }
+                    apiKey:            "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
+                    authDomain:        "digital-forester.firebaseapp.com",
+                    databaseURL:       "https://digital-forester.firebaseio.com",
+                    projectId:         "digital-forester",
+                    storageBucket:     "",
+                    messagingSenderId: "966863363583"
+                 }
 
     firebase.initializeApp(config);
     database = firebase.database();
@@ -105,16 +104,15 @@ function setup() {
     intro = createP('Welcome.').id('body');
     treebutton   = createP('\tCreate Tree').id('choices')
                                            .style('display','inline-flex')
-                                           .style('margin-left','15px');
+                                           .style('margin-left','15px')
+                                           .mousePressed(toggleCreate);
 
     wanderbutton = createP('Wander Arboretum').id('choices')
                                               .style('display','inline-flex')
                                               .style('margin','0')
                                               .style('color', 'rgba(135, 180, 130, 0.3)');
 
-    treebutton.mousePressed(toggleCreate);
-
-    growthRing();
+    growthRing(); // the tree/canvas setup stuff
 
 } //end of setup
 
@@ -188,10 +186,10 @@ function growthRing(){
 function flickeringBackground(){
 
     background(255);
-    background(60, 255/noise(frameCount%8), 20, 10);
+    background(60, 255/noise(frameCount%24), 20, 10);
 
     if(sunlight){
-        var dapple = random(noise(frameCount%7))*6;
+        var dapple = random(noise(frameCount%21))*6;
         background(40, 30*dapple+100+random(15), 30, 6);
         var flicker = floor(random(4));
         if(flicker == 3){
@@ -201,7 +199,6 @@ function flickeringBackground(){
         }
     }
 }
-
 
 
 
@@ -223,6 +220,7 @@ maxCharCount = function(){
 }
 
 clearCanvas = () =>  createCanvas(500, 500);
+setRule = (i, txt) => rules[i].b = txt;
 
 
 function CircleMask(factor){
@@ -391,18 +389,6 @@ function growthRules(letter, branchLength, depthFactor, gravity){
 }
 
 
-
-
-
-function mousePressed(){
-
-    sunlight = true;
-
-    if (creating){
-
-        incrementCreating();
-    }
-}
 
 
 

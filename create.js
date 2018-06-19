@@ -10,17 +10,6 @@ var caption
 var delimiters = [" ", ",", "\n", ".", "\t", ":", ";", "?", "!", "'"];
 
 
-function forestStory(txt){
-
-    bintext = textToBin(txt);
-    var words = splitTokens(txt, delimiters);
-
-    var newRule = textToRule(words);
-
-    rules[0].b = newRule;
-}
-
-
 function incrementCreating(){
     // increment instruction text
     if (clicks < instructions.length){
@@ -72,13 +61,15 @@ function toggleCreate(){
 
     back = createP('back').id('choices')
                           .style('display','inline-flex')
-                          .style('margin','0')
-                          .mousePressed( () => clicks -= 1 );
+                          .style('margin','0');
+
 
     next = createP('next').id('choices')
                           .style('display','inline-flex')
-                          .style('margin','0')
-                          .mousePressed( () => clicks += 1 );
+                          .style('margin','0');
+
+    back.mousePressed( function(){ clicks -= 1; incrementCreating(); });
+    next.mousePressed( function(){ clicks += 1; incrementCreating(); });
 
     wanderbutton.parent('navigation');
     treebutton.parent('navigation');
@@ -124,18 +115,26 @@ function saveText(){
     }
 
 
-
+    var response = '';
     for(var i = 0; i < seedTxt.length; i++){
         response = response.concat(seedTxt[i].value(), ' ');
         print(response);
         seedTxt[i].remove();
     }
 
-    forestStory(response);  // this creates the tree from the user text reponse
-    sendData(response);     // send the tree to the database
+
+    txt     = response;
+    bintext = textToBin(response); //translate to binary
+
+    // set the rule
+    var words = splitTokens(response, delimiters);
+    setRule(0, textToRule(words))
+
+    // send the tree to the database
+    sendData(response);
 
     lookingAt = keys.length -1
-    toggleWander();           // wander() disables creating mode
+    toggleWander();           // this disables creating mode
 
 }
 

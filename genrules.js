@@ -459,14 +459,9 @@ function stringAnalysis(string){
                 break;
 
 
-            case "+":
-                count["rot"] += 1;
-                break;
-            case "-":
-                count["rot"] -= 1;
-                break;
-            case "G":
-                count["rot"] -= 1/GminusRatio;
+            case "+": count["rot"] += 1; break;
+            case "-": count["rot"] -= 1; break;
+            case "G": count["rot"] -= 1/GminusRatio;
         }
     }
 
@@ -478,14 +473,16 @@ function stringAnalysis(string){
 ////// CONVENCIENCE FUNCTIONS //////
 
 getChar = function(num){
-    num %= 6; // mod 6
 
-    if      (num == 0) return "F";
-    else if (num == 1) return "G";
-    else if (num == 2) return "+";
-    else if (num == 3) return "-";
-    else if (num == 4) return "[";
-    else if (num == 5) return "]";
+    switch(num%6){
+
+        case 0: return "F";
+        case 1: return "G";
+        case 2: return "+";
+        case 3: return "-";
+        case 4: return "[";
+        case 5: return "]";
+    }
 }
 
 // convenience functions.

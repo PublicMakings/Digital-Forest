@@ -5,7 +5,7 @@ var randSeeds = [];
 
 var labeled = false;
 
-
+// sets the stage for the wandering mode
 function wander(){
 
     //make a bunch of clicables for the trees stored in the databse
@@ -63,12 +63,14 @@ function captionTree(text){
 
 function toggleWander(){
 
+    sunlight = true;
+
     intro.remove()
     if (creating)  disableCreating();
     if (wandering) disableWandering();
 
     wander();
-    retrieveStoredTree(lookingAt); // display the first tree
+    retrieveStoredTree(lookingAt); // display a tree
 
     wanderbutton.parent('navigation');
     treebutton.parent('navigation');
@@ -80,15 +82,18 @@ function disableWandering(){
     if (!wandering)
         return;
 
+    // delete the number buttons
     for(var i = 0; i<arboretum.length; i++)
         arboretum[i].remove();
 
+    // delete the caption
     if (labeled)
         caption.remove();
 
     wandering = false;
 }
 
+// give the wanderbutton functionality. Only called if firebase pings
 function enableWander(){
     wanderbutton.mousePressed(toggleWander);
     wanderbutton.style('color', treebutton.style("color"));
