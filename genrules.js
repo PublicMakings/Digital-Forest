@@ -270,9 +270,11 @@ function removeExcessRotation(string){
     for (let n = string.length - 1; n >= 0; n--){
         letter = string.charAt(n);
 
+
         if      (letter == "]")                         foundF = false;
         else if (letter == "F")                         foundF = true;
         else if (isAngleCharacter(letter) && !foundF)   string = deleteChar(string, n);
+
 
     }
     return string;
@@ -307,6 +309,7 @@ function GsToMinus(string){
 
             counter += 1;
         }
+
         else counter = 0;
 
 

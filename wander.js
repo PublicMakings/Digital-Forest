@@ -9,8 +9,10 @@ function wander(){
     if (wandering) disableWandering();
 
     //make a bunch of clicables for the trees stored in the databse
+
     // createElement('br');
     // createP('').id('nursery').parent('captions');
+
     for(var i = 0; i<keys.length; i++){
 
         //get data
@@ -20,7 +22,8 @@ function wander(){
         randSeeds[i]    = lSystem[k].seed;
 
         //make some <divs> to call that data
-        arboretum[i] = createDiv(i).parent('captions').id('saplings');
+
+        arboretum[i] = createDiv(i).parent('nursery').id('saplings');
 
         //this is supposed to call the old tree files
         arboretum[i].mouseClicked(specimens);

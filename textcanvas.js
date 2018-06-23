@@ -14,6 +14,7 @@ var delimiters = [" ", ",", "\n", ".", "\t", ":", ";", "?", "!", "'"];
 var caption
 function forestStory(txt){
 
+
     hasSubmitted = true;
 
     caption = createElement('p1',txt).id('caption').parent('captions');
@@ -22,7 +23,9 @@ function forestStory(txt){
     bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
 
+
     var newRule = textToRule(words);
+
 
     rules[0].b = newRule;
 
@@ -40,10 +43,12 @@ function textToRule(words){
 
     var newRule = "";
 
+
     newRule += wordCountRules(words);
     newRule += semanticRules(words);
     newRule += charCountRules(words);
     newRule += charValuesRules(words);
+
 
     // Do an initial cleanup of the result from above, then start fixing it if it isn't robust enough
     newRule = cleanUp(newRule);
@@ -63,6 +68,7 @@ function textToRule(words){
 
     // Ensure there are rotation characters present, and if not add them in.
     newRule = ensureRotation(newRule);
+
 
     newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
     newRule = addSpaces(newRule); // this is just so the strings can print in the background
@@ -121,6 +127,7 @@ function setTreeParameters(){
     var analysis = stringAnalysis(branchings);
     var levels = deepestLevel(branchings);
 
+
     if      (levels < 3)  branchDepthFactor = height / 143;
     else if (levels < 10) branchDepthFactor = map(levels, 3, 10, height/166.66, height/357);
     else if (levels < 30) branchDepthFactor = map(levels, 10, 30, height/357, height/454.5);
@@ -133,14 +140,18 @@ function setTreeParameters(){
     var maxrotation = analysis["rot"].reduce( (max, item) => Math.max(abs(max), abs(item)) ); // find the absolute max
 
     setAngle(maxrotation);
+
 }
 
 // redo this to include rotation also (i.e. effective length).
 function setLen(n_Fs){
+
     return len = 0.95 * height/(2*n_Fs);
+
 }
 
 function setAngle(rot){
+
 
     angle = radians(35 / rot); // max rotation is not enough. Must be weighted by distance
 }
@@ -157,6 +168,7 @@ function deepestLevel(string){
 
         if (letter == "[") level += 1;
         if (letter == "]") level -= 1;
+
 
         if (level > maxLevel){
             maxLevel = level;
