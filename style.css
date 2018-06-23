@@ -11,7 +11,6 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
 #title{ font-size: 18;
 /*        position: relative;*/
         position: fixed;
-/*        bottom: 25px;*/
         Z-index: 3;
         color:rgba(70,160,120,.5)
         }
@@ -19,11 +18,11 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
     max-width:460px;
         top:470px;
 
-/*        position: relative;*/
         position: relative;
 /*        Z-index: 3;*/
         color:rgb(100,160,110);
         }
+
 #caption{
         position: fixed;
         height:200px;
@@ -40,6 +39,7 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
 
 #navigation{
     position:fixed;
+
     right:25px;
     justify-content: right;
     height:63px;
@@ -49,6 +49,7 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
 
 #nursery{
     position:fixed;
+
     right:45px;
     width:40px;
     top:20px;
@@ -67,6 +68,7 @@ Canvas {position: fixed; Top: 0; Left: 0; Z-index:-1; } #content {position: rela
 
 #saplings{
     position: relative;
+
     font-size: 20px;
     display: inline-flex;
     width: 30px;

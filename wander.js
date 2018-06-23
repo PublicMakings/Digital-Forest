@@ -9,8 +9,10 @@ function wander(){
     if (wandering) disableWandering();
 
     //make a bunch of clicables for the trees stored in the databse
-//     createElement('br');
-//     createP('').id('nursery').parent('captions');
+
+    // createElement('br');
+    // createP('').id('nursery').parent('captions');
+
     for(var i = 0; i<keys.length; i++){
 
         //get data
@@ -20,6 +22,7 @@ function wander(){
         randSeeds[i]    = lSystem[k].seed;
 
         //make some <divs> to call that data
+
         arboretum[i] = createDiv(i).parent('nursery').id('saplings');
 
         //this is supposed to call the old tree files
@@ -42,11 +45,6 @@ function specimens(evt){
 var labeled = false;    // aren't all trees labeled? TODO: figure out why this is here
 
 function retrieveStoredTree(num){
-
-    // branchings = treeStories[num]; // would be better if what we retrieved was the rule, and we recreated the Lsystem
-
-    // rules[0].b = treeStories[num];
-    // resetLSystems();
 
     // it's ok to set these both as the same seed, since they affect vastly different things
     // make sure to set the seeds first!!

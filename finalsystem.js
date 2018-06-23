@@ -78,6 +78,9 @@ var treeLoc = 0.7; // as a fraction of the canvas height
 var trunkCol, woodCol, rootCol;
 var drawRoots = true;
 
+var fullGrowth = false;
+
+
 var lookingAt = 0;
 
 var rules = [];
@@ -142,7 +145,9 @@ function draw(){
 
         fill(220, 220, 200, 110);
         stroke(220, 220, 200, 110);
-        text(branchings.substr(0, 1600), 0, -10, width, height);
+
+        text(branchings.substr(0, 1600), 0, -15, width, height);
+
 
 
         /////// mask the text
@@ -150,14 +155,17 @@ function draw(){
         strokeWeight(2);
         stroke(100, 100);
         CircleMask(0.95);
-        darkenEdges(0.95, 40, 50, 2, 150); // adds a shadow-like rim
+
+        darkenEdges(0.95, 50, 20, 1.5, 100); // adds a shadow-like rim
     }
 
     /////// draw the tree
     // update values:
     updateWind();
-    // increment_char();
-    fullGrowth(); // temporary so we can see the full tree for rule developement
+
+    if (fullGrowth) maxCharCount(); // temporary so we can see the full tree for rule developement
+    else            increment_char();
+
 
     resetMatrix();
     translate(width/2, treeLoc*height);
@@ -282,7 +290,9 @@ function resetCharCount(){
     root_n = 0;
 }
 
-function fullGrowth(){
+
+function maxCharCount(){
+
     char_n = branchings.length - 1;
     root_n = roots.length - 1;
 }
@@ -290,17 +300,10 @@ function fullGrowth(){
 
 function clearCanvas(){
 
-//    var canvas = createCanvas(window.innerHeight, window.innerHeight);
-//    if(window.innerWidth > window.innerHeight){
-//        var canvas = createCanvas(window.innerHeight*.9, window.innerHeight*.9);}
-//    else{
-//        var canvas = createCanvas(window.innerWidth*.9,window.innerWidth*.9);  
-//        }
-      if(displayHeight > displayWidth){
-          var canvas = createCanvas(displayWidth*.9, displayWidth*.9);}
-    else{var canvas = createCanvas(displayHeight*.9, displayHeight*.9);}
+    var canvas = createCanvas(500, 500);
 }
-    
+
+
 function CircleMask(factor){
 
     var rx = width/2 * factor;

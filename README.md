@@ -14,8 +14,7 @@ p5.js interactive artwork about narratives of trees.
 - [x] clicking on a mode button (wander or create) while html objects are already onscreen doubles them
 - [x] clicking on a number more than once may yield different results (rand num issue?)
 - [X] wait for firebase (loop/noLoop for example)
-- [ ] fix formatting for wander buttons/captions which overlap with other objects often
-- [ ] add angle selection to setTreeParameters
+- [ ] fix formatting for wander buttons/captions which overlap with other objects oft
 
 - [ ] sanitize filter
 - [x] Binary background

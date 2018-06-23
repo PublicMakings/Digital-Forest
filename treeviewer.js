@@ -1,3 +1,0 @@
-//load json
-
-var jsonKeys = []
