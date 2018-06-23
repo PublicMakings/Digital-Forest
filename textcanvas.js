@@ -2,74 +2,64 @@
 // TEXT INPUT
 
 var textField;
-var submit;
-var txt;
+var submit, wanderbutton, treebutton;
+var back, next;
+var txt, bintext;
 
 var hasSubmitted = false;
 
-var languageForest = {
-        tree: "[FF]",
-        trees: "[F-F+]",
-        rhizome: "+",
-        rhizomes: "F[-F]",
-        leaf: "G",
-        leaves: "F[GF+F]"
-    };
 
 var delimiters = [" ", ",", "\n", ".", "\t", ":", ";", "?", "!", "'"];
 
-var lengthBasedRules = {
-        0: ["FG",
-            "G",
-            "F"],
-
-        10: ["[+F",
-             "-[F",
-             "[G"],
-
-        20: ["FG]",
-             "F[GF]",
-             "FF]G"]
-    };
-
-function forestStory(){
+var caption
+function forestStory(txt){
 
     hasSubmitted = true;
 
-    var newRule = "";
+    caption = createElement('p1',txt).id('caption').parent('captions');
+    labeled = true;
 
-    txt = textField.value();
+    bintext = textToBin(txt);
     var words = splitTokens(txt, delimiters);
-    // print(words);
 
-
-    // SEMANTIC RULES
-
-
-// Math option creating key value pairs with numbers and then proposing a math operand...
-
-
-// character conversion
-
-    // WORD COUNT BASED RULES
-
-    newRule = wordCountRules(newRule, words);
-    newRule = semanticRules(newRule, words);
-
-
-// protection and sanization
-
+    var newRule = textToRule(words);
 
     rules[0].b = newRule;
-    resetSystems();
+
+    // resetLSystems();
+    // setTreeParameters();
 
     print(textToBin(txt));
-//
     print("new rule: F -> ", newRule);
     print(branchings);
     print(txt);
 }
 
+
+function textToRule(words){
+
+    var newRule = "";
+
+    newRule += wordCountRules(words);
+    newRule += semanticRules(words);
+    newRule += charCountRules(words);
+    newRule += charValuesRules(words);
+    newRule = cleanUp(newRule);
+
+    var L = allowedCharLength(words);
+    var n = round(random(1, 5));
+    while (newRule.length > L){
+
+        [newRule, n] = hoppingTruncate(newRule, n);
+
+        if (n == 0) n = round(random(1, 5));
+    }
+
+    newRule = "F" + cleanUp(newRule);   // Add an F in front since it makes things nicer in most cases.
+    newRule = addSpaces(newRule); // this is just so the strings can print in the background
+
+    return newRule;
+}
 
 
 function textToBin(text) {
@@ -84,85 +74,78 @@ function textToBin(text) {
 }
 
 
-function semanticRules(string, words){
+// add spaces around brackets to allow text wrapping for the background
+function addSpaces(text){
 
-    var keyword, rule;
-    for(var x = 0; x < words.length; x++){
+    var letter, next;
+    var string = "";
 
-        keyword = words[x];
-        rule = languageForest[keyword];
+    for (var n = 0; n < text.length - 1; n++){
 
-        if (rule != undefined) string += rule;
+        letter = text.charAt(n);
+        next = text.charAt(n + 1);
+
+        if  (!isBracket(next)){
+
+            if      (letter == "[") letter = " " + letter;
+            else if (letter == "]") letter += " ";
+        }
+
+        string += letter;
     }
+
+    string += text[text.length - 1];
 
     return string;
 }
 
-function wordCountRules(string, words){
-    var lengths = Object.keys(lengthBasedRules);
-    var potentialRules = Object.values(lengthBasedRules);
 
-    for (var n = 0; n < lengths.length; n++){
+//= ideally, this function will set all the parameters necessary to draw the tree correctly including:
+// - branch length,
+// - angle
+// - trunk thickness
+// - depth-associated branch width factor
+// using only the brachings string (or the rule) as a guide.
 
-        if (words.length > lengths[n]){
-            string += random(potentialRules[n])
+function setTreeParameters(){
+
+    var analysis = stringAnalysis(branchings);
+    var levels = deepestLevel(branchings);
+
+    if      (levels < 3)  branchDepthFactor = 3.5;
+    else if (levels < 10) branchDepthFactor = map(levels, 3, 10, 3, 1.4);
+    else if (levels < 30) branchDepthFactor = map(levels, 10, 30, 1.4, 1.1);
+    else                  branchDepthFactor = 1.05;
+
+    var baseLength = setLen(max(analysis["F"]));
+
+    len = random(0.8*baseLength, 1.3*baseLength);
+}
+
+// redo this to include rotation also (i.e. effective length).
+function setLen(n_Fs){
+    return len = 0.9 * height/(2*n_Fs);
+}
+
+
+function deepestLevel(string){
+
+    var maxLevel = 0;
+
+    var level = 0;
+    var letter;
+    for (var n = 0; n < string.length; n++){
+        letter = string.charAt(n);
+
+        if (letter == "[") level += 1;
+        if (letter == "]") level -= 1;
+
+        if (level > maxLevel){
+            maxLevel = level;
         }
     }
-
-    return string;
-}
-
-function countOpenBrackets(string){
-
-    var left = 0, right = 0;
-
-    var char;
-    for (var n = 0; n < string.length; n++){
-        char = string.charAt[n];
-
-        if (char == "[") left += 1;
-        if (char == "]") right += 1;
-
-    }
-
-    return (left - right);
-}
-
-function closeOpenBrackets(string){
-
-    var n = countOpenBrackets(string);
-
-    var closingBrackets = "]" * n
-
-    return string + closingBrackets;
+    return maxLevel;
 }
 
 
-function overallCurve(string){
 
-    var plusses = [0];
-    var minuses = [0];
-
-    var layer = 0
-    var char;
-    for (var n = 0; n < string.length; n++){
-
-        char = string[n];
-
-        if (char == "[") layer += 1;
-        if (char == "]") layer -= 1;
-
-        if (layer > plusses.length - 1)
-        {
-            plusses.push(0);
-            minuses.push(0);
-        }
-
-        if (char == "+") plusses[layer] += 1;
-        if (char == "-") minuses[layer] += 1;
-        if (char == "G") minuses[layer] += 0.1;
-    }
-
-
-    return {plusses, minuses}
-}

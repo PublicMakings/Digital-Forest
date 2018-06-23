@@ -1,47 +1,45 @@
 <!DOCTYPE html>
 <html>
-<!-- This site owes a lot to the influence of Donna Harraway, Jane Bennet, Eduardo Kohn, Christy Ghast, Ernesto Pujol, Mary Mattingly, Colin Mullen, Daniel Shiffman, Allison Parish, Linda Weintraub, Elizabeth Potenza, and Carol Padberg.
+    <head>
+  <!--      <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
 
-This project was initiated by Andrew Oesch. 
-The code was based on adaptation Daniel Shiffman's implamentation of an L-system 
-This iteration of code was written by Tomer Arnon & Andrew Oesch.
--->
-<head>
-  <meta charset="UTF-8">
-  <title>...^^^/\Digital Forest≈≈≈≈^^.....</title>
-  <script src="libraries/p5.js" type="text/javascript"></script>
-  <script src="js/vendor/jquery-1.11.2.min.js" type="text/javascript"></script>
-  <!-- <script src="js/vendor/jquery-1.11.2.min.map" type="text/javascript"></script> -->
-  
-  <link rel="stylesheet" href="style.css">
-    
-    
-  
-  <script src="libraries/p5.dom.js" type="text/javascript"></script>
-  <script src="libraries/p5.sound.js" type="text/javascript"></script>
-  
+          <meta charset="UTF-8">
+        <title>...^^^/\Digital Arboretum of Memory≈≈≈≈^^.....</title>
+    <!-- This project owes a lot to the influence of Donna Harraway, Jane Bennett, Eduardo Kohn, Christy Ghast, Ernesto Pujol, Mary Mattingly, Colin Mullen, Daniel Shiffman, Allison Parish, Linda Weintraub,     Elizabeth Potenza, Carol Padberg, & John Oesch.
+    1
+        This project was initiated by Andrew Oesch.
+        This site was written by Tomer Arnon & Andrew Oesch.-->
 
-  <script src="system.js" type="text/javascript"></script>
-  <script src="textcanvas.js" type="text/javascript"></script>
-  <script src="treeReflection.js" type="text/javascript"></script>
+        <script src="libraries/p5.js" type="text/javascript"></script>
+        <script src="libraries/p5.dom.js" type="text/javascript"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
 
 
-</head>
-  
-    
+        <script src="finalsystem.js" type="text/javascript"></script>
+        <script src="wander.js" type="text/javascript"></script>
+        <script src="genrules.js" type="text/javascript"></script>
+        <script src="textcanvas.js" type="text/javascript"></script>
 
-<body>
+        <link rel="stylesheet" href="style.css">
+        
+        <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width">
+        
+    </head>
+<style>
+    @media screen {
+        body{font-size:2em;}
+        
+    }    
+</style>
 
-    <!-- <textarea id = "textbox">   treed, trees, treeper, tree </textarea> -->
-    <textarea id = "textbox">   I am a tree covered in leaves which are not rhizomes. I am a tree covered in leaves which are not rhizomes. I am a tree covered in leaves which are not rhizomes. </textarea>
-    <p id = "intro">Welcome to a Digital Forest.<p>
-    <p id = "instructions"><p>
-<!--    <textarea id = "textbox">What memories do you have of trees?</textarea>-->
-    
-    
-    <button id = "button"> submit</button>
-    <button id = "json"> json tester</button>
+    <body>
 
-</body>
-
+        <div id = captions>
+            <div id = nursery></div>
+        </div>
+        <div id = "footer">
+            <p1 id = "title">Digital Arboretum of Memory</p1>
+        </div>
+        <div id = "navigation">    </div>
+    </body>
 </html>
