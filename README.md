@@ -24,6 +24,7 @@ p5.js interactive artwork about narratives of trees.
 - [ ] write sunlight shader
 - [ ] add offline creating mode just in case (right now it must go through wander())
 
+
 - [ ] sanitize filter
 - [x] Binary background
 - [ ] eventually create a token for writing to the database?

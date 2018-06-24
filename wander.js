@@ -18,7 +18,8 @@ function wander(){
         randSeeds[i]    = lSystem[k].seed;
 
         //make some <divs> to call that data
-        arboretum[i] = createDiv(i).parent('captions').id('saplings');
+
+        arboretum[i] = createDiv(i).parent('nursery').id('saplings');
 
         //this is supposed to call the old tree files
         arboretum[i].mouseClicked(specimens);
@@ -113,10 +114,10 @@ function setTreeParameters(){
 
     var baseLength = setLen(max(analysis["n"]));
 
-    // function for finding the index of the absolute max
+    // function for finding the index of the max absolute value
     IndOfAbsMax = (iMax, x, i, arr) => abs(x) > abs(arr[iMax]) ? i : iMax;
 
-    var i = analysis["rot"].reduce(IndOfAbsMax);
+    var i = analysis["rot"].reduce(IndOfAbsMax);  // index of the max
 
     var maxRot        = abs(analysis["rot"][i]),
         depthOfMaxRot = analysis["n"][i]
