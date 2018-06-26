@@ -3,16 +3,12 @@ var humanStories = [];
 var arboretum = [];
 var randSeeds = [];
 
+var labeled = false;
+
+// sets the stage for the wandering mode
 function wander(){
 
-    if (creating)  disableCreating();
-    if (wandering) disableWandering();
-
     //make a bunch of clicables for the trees stored in the databse
-
-    // createElement('br');
-    // createP('').id('nursery').parent('captions');
-
     for(var i = 0; i<keys.length; i++){
 
         //get data
@@ -35,14 +31,11 @@ function wander(){
 function specimens(evt){
     //this gets the number of the div and that can index humanstories and treestories
     const num = +evt.target.textContent;
-    // print(treeStories[num]);
 
     lookingAt = num;
     retrieveStoredTree(num);
 }
 
-
-var labeled = false;    // aren't all trees labeled? TODO: figure out why this is here
 
 function retrieveStoredTree(num){
 
@@ -66,78 +59,101 @@ function captionTree(text){
     if (labeled) caption.remove();
 
     caption = createElement('p1', text).id('caption').parent('captions');
-    // caption.html(text);
     labeled = true;
 }
 
+function toggleWander(){
+
+    sunlight = true;
+
+    intro.remove()
+    if (creating)  disableCreating();
+    if (wandering) disableWandering();
+
+    wander();
+    retrieveStoredTree(lookingAt); // display a tree
+
+    wanderbutton.parent('navigation');
+    treebutton.parent('navigation');
+}
 
 function disableWandering(){
 
-    for(var i = 0; i<arboretum.length; i++){
-        arboretum[i].remove();
-    }
+    // if it's off do nothing
+    if (!wandering)
+        return;
 
-    if (labeled) caption.remove();
+    // delete the number buttons
+    for(var i = 0; i<arboretum.length; i++)
+        arboretum[i].remove();
+
+    // delete the caption
+    if (labeled)
+        caption.remove();
+
     wandering = false;
 }
 
-
-function saveText(){
-
-    // if the textbox is empty or if it is the same as the prompt question (i.e. hasn't been addressed at all), do nothing
-
-    for(var i = 0; i < seedTxt.length; i++){
-
-        sdtxt = seedTxt[i].value();
-
-        if (sdtxt.length == 0 ||
-            sdtxt == questions[i][1] ||
-            sdtxt == 'please type something')
-        {
-            seedTxt[i].value('please type something');
-
-            return; // do nothing else
-        }
-    }
-
-
-
-    for(var i = 0; i < seedTxt.length; i++){
-        response = response.concat(seedTxt[i].value(), ' ');
-        print(response);
-        seedTxt[i].remove();
-    }
-
-    // removeElements();
-    forestStory(response);  // this creates the tree from the user text reponse
-    sendData(response);     // send the tree to the database
-
-    wander();           // wander() disables creating mode
-    retrieveStoredTree(keys.length - 1)
+// give the wanderbutton functionality. Only called if firebase pings
+function enableWander(){
+    wanderbutton.mousePressed(toggleWander);
+    wanderbutton.style('color', treebutton.style("color"));
 }
 
 
-// sends data to firebase
-function sendData(response) {
-    var trees = database.ref('patterns');
+//= ideally, this function will set all the parameters necessary to draw the tree correctly including:
+// - branch length,
+// - angle
+// - trunk thickness
+// - depth-associated branch width factor
+// using only the brachings string (or the rule) as a guide.
+function setTreeParameters(){
 
-    var pattern = patterning(response);
+    var analysis = stringAnalysis(branchings);
+    var levels = deepestLevel(branchings);
 
-    var tree = trees.push(pattern, finished);
-    console.log("imagined tree" + tree.key);
+    var baseLength = setLen(max(analysis["n"]));
+
+    // function for finding the index of the max absolute value
+    IndOfAbsMax = (iMax, x, i, arr) => abs(x) > abs(arr[iMax]) ? i : iMax;
+
+    var i = analysis["rot"].reduce(IndOfAbsMax);  // index of the max
+
+    var maxRot        = abs(analysis["rot"][i]),
+        depthOfMaxRot = analysis["n"][i]
+
+    branchDepthFactor = setBranchDepthFactor(levels);
+    len = random(0.8*baseLength, 1.2*baseLength);
+    angle = setAngle(maxRot * pow(0.995,depthOfMaxRot));
 }
 
-function patterning(humantext){
 
-    var pattern = {
-        // don't change these parameters without letting AO know, the firebase server will need some security rules changed
-        tree:   textToRule(humantext),
-        human:  humantext,
-        seed:   random(60),
-        fork1:  random(8, 17),
-//        fork2:random(pattern.fork1-1,patern.fork1+3,),
-        length: random(height/random(8, 14))
+setLen   = (n_Fs) => 0.95 * height/(2*n_Fs); // redo this to include rotation also (i.e. effective length).
+setAngle = (rot)  => radians(60 / rot); // max rotation is not enough. Must be weighted by distance
+setBranchDepthFactor = function(levels){
+    // weird numbers here are all magic constants. They "just work" in nearly every case
+    if      (levels < 3)  return height / 143;
+    else if (levels < 10) return map(levels, 3, 10, height/166.66, height/357);
+    else if (levels < 30) return map(levels, 10, 30, height/357, height/454.5);
+    else                  return height/476.2;
+}
+
+// deepest set of nested brackets
+deepestLevel = function(string){
+
+    var maxLevel = 0, level = 0, letter;
+
+    for (var n = 0; n < string.length; n++){
+        letter = string.charAt(n);
+
+        if      (letter == "[") level += 1;
+        else if (letter == "]") level -= 1;
+
+        if (level > maxLevel) maxLevel = level;
+
     }
-
-    return pattern;
+    return maxLevel;
 }
+
+
+
