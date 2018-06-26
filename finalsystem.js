@@ -83,12 +83,12 @@ function setup() {
 
     // Initialize Firebase
     var config = {
-                    apiKey:            "AIzaSyAdEgPM5yVo2CbUc4F7936oM3ZVDjQCbms",
-                    authDomain:        "digital-forester.firebaseapp.com",
-                    databaseURL:       "https://digital-forester.firebaseio.com",
-                    projectId:         "digital-forester",
+                    apiKey:            "yourapikey",
+                    authDomain:        "your firebase",
+                    databaseURL:       "your data url",
+                    projectId:         "name",
                     storageBucket:     "",
-                    messagingSenderId: "966863363583"
+                    messagingSenderId: "id"
                  }
 
     firebase.initializeApp(config);
